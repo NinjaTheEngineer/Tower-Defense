@@ -16,9 +16,10 @@ public class ResourcesManager : NinjaMonoBehaviour {
                 return;
             }
             _currentGoldAmount = value;
+            InvokeOnGoldUpdated();
         }
     } 
-    public static System.Action OnGoldEarned;
+    public static System.Action OnGoldUpdated;
     public static ResourcesManager Instance;
     private void Awake() {
         string logId = "Awake";
@@ -37,17 +38,32 @@ public class ResourcesManager : NinjaMonoBehaviour {
             }
         }
     }
-
+    public bool SpendGold(int goldToSpend) {
+        string logId = "SpendGold";
+        if(goldToSpend<=0 || goldToSpend>CurrentGoldAmount) {
+            logd(logId, "GoldToSpend="+goldToSpend+" CurrentGoldAmount="+CurrentGoldAmount+" => no-op");
+            return false;
+        }
+        CurrentGoldAmount-= goldToSpend;
+        return true;
+    }
     private void HandleGoldGeneration() {
         string logId = "HandleGoldGeneration";
         float timeSinceGoldEarned = Time.realtimeSinceStartup-goldLastEarnTime; 
         if(goldEarnTime < timeSinceGoldEarned) {
             CurrentGoldAmount += 1;
             logd(logId, "TimeSinceGoldEarned="+timeSinceGoldEarned+ " CurrentGoldAmount="+CurrentGoldAmount+" => Invoke OnGoldEarned");
-            OnGoldEarned.Invoke();
             goldLastEarnTime = Time.realtimeSinceStartup;
         } else {
             logt(logId, "GoldLastEarnTime="+goldLastEarnTime+" TimeSinceGoldEarned="+timeSinceGoldEarned+ " CurrentGoldAmount="+CurrentGoldAmount+" => Not generating gold");
         }
+    }
+    private void InvokeOnGoldUpdated() {
+        string logId = "InvokeOnGoldUpdated";
+        if(OnGoldUpdated==null) {
+            logw(logId, "No listeneres registered for OnGameStart event => no-op");
+            return;
+        }
+        OnGoldUpdated.Invoke();
     }
 }

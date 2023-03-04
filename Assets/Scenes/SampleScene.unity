@@ -363,7 +363,7 @@ GameObject:
   - component: {fileID: 297712525}
   - component: {fileID: 297712524}
   m_Layer: 5
-  m_Name: Gold
+  m_Name: GoldUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1049,6 +1049,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerGO: {fileID: 2917901245774282463, guid: ffba10ae88bf45542ae5275adc5a3f69, type: 3}
+  towerPrice: 5
   eventSystem: {fileID: 700712617}
   placeableLayer:
     serializedVersion: 2
@@ -1180,7 +1181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxGoldAmount: 100
-  goldEarnTime: 3
+  goldEarnTime: 0.5
 --- !u!4 &1172805848
 Transform:
   m_ObjectHideFlags: 0
@@ -1770,4 +1771,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towersUI: {fileID: 372336044}
+  goldUI: {fileID: 297712522}
   goldAmountText: {fileID: 412721353}

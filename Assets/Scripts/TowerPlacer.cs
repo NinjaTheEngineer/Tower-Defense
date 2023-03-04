@@ -4,10 +4,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class TowerPlacer : NinjaMonoBehaviour {
+    public static TowerPlacer Instance;
     public Tower towerGO;
+    public int towerPrice = 5;
     public EventSystem eventSystem;
     private Tower towerBlueprint;
     public LayerMask placeableLayer;
+    public System.Action OnTowerPlaced;
+    public bool HasEnoughGoldForTower => ResourcesManager.Instance.CurrentGoldAmount >= towerPrice;
+    private void Awake() {
+        string logId = "Awake";
+        if(Instance==null) {
+            logd(logId, "Setting Singleton Instance to GameObject.");
+            Instance = this;
+        } else {
+            logw(logId, "Singleton Instance already set => Destroying this GameObject.");
+            Destroy(gameObject);
+        }
+    }
     private void Update() {
         string logId = "Update";
         if(!GameManager.Instance.GameStarted) {
@@ -54,11 +68,23 @@ public class TowerPlacer : NinjaMonoBehaviour {
             logw(logId, "TowerBlueprint is null => no-op");
             return;
         }
-        logd(logId, "TowerBlueprint="+towerBlueprint+" => Place");
-        towerBlueprint.Place();
-        towerBlueprint = null;
+        if(ResourcesManager.Instance.SpendGold(towerPrice)) {
+            logd(logId, "TowerBlueprint="+towerBlueprint+" => Place");
+            InvokeOnTowerPlaced();
+            towerBlueprint.Place();
+            towerBlueprint = null;
+        } else {
+            logd(logId, "Not even gold for tower => no-op");
+        }
     }
-
+    private void InvokeOnTowerPlaced() {
+        string logId = "InvokeOnGoldUpdated";
+        if(OnTowerPlaced==null) {
+            logw(logId, "No listeneres registered for OnGameStart event => no-op");
+            return;
+        }
+        OnTowerPlaced.Invoke();
+    }
     private bool IsMouseOverUI() {
         string logId = "IsMouseOverUI";
         PointerEventData eventData = new PointerEventData(eventSystem);

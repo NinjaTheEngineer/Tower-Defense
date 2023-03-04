@@ -12,7 +12,7 @@ public class GameManager : NinjaMonoBehaviour {
     }
     public bool GameStarted => currentState==GameState.Started;
     public static GameManager Instance;
-    public static System.Action OnGameStart;
+    public static System.Action OnStartGame;
 
     private void Awake() {
         string logId = "Awake";
@@ -28,13 +28,20 @@ public class GameManager : NinjaMonoBehaviour {
 
     public void StartGame() {
         string logId = "StartGame";
-        logd(logId, "Invoking StartGameEvent");
-        OnGameStart.Invoke();
         currentState = GameState.Started;
+        InvokeOnStartGame();
     }
-
+    private void InvokeOnStartGame() {
+        string logId = "InvokeOnStartGame";
+        if(OnStartGame==null) {
+            logw(logId, "No listeneres registered for OnStartGame event => no-op");
+            return;
+        }
+        logd(logId, "Invoking OnStartGame");
+        OnStartGame.Invoke();
+    }
     private void Update() {
-        string logId = "Update";
+        //string logId = "Update";
         if(currentState!=GameState.Started) {
             return;
         }

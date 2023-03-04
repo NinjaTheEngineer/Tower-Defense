@@ -5,6 +5,7 @@ using TMPro;
 
 public class UIManager : NinjaMonoBehaviour {
     public GameObject towersUI;
+    public GameObject goldUI;
     public TextMeshProUGUI goldAmountText;
     private void Awake() {
         HideInGameUI();
@@ -17,29 +18,39 @@ public class UIManager : NinjaMonoBehaviour {
     private void SetOnStartGameEventListeners() {
         string logId = "SetOnStartGameEventListeners";
         logd(logId, "Setting StartGameEvent Listeners");
-        GameManager.OnGameStart -= () => ShowInGameUI();
-        GameManager.OnGameStart += () => ShowInGameUI();
+        GameManager.OnStartGame -= () => ShowInGameUI();
+        GameManager.OnStartGame += () => ShowInGameUI();
     }
     private void SetOnGoldEarnedEventListeners() {
         string logId = "SetOnGoldEarnedEventListeners";
         logd(logId, "Setting StartGameEvent Listeners");
-        ResourcesManager.OnGoldEarned -= () => UpdateGoldAmountText();
-        ResourcesManager.OnGoldEarned += () => UpdateGoldAmountText();
+        ResourcesManager.OnGoldUpdated -= () => UpdateGoldAmountText();
+        ResourcesManager.OnGoldUpdated += () => UpdateGoldAmountText();
     }
     private void ShowInGameUI() {
         string logId = "ShowInGameUI";
         if(towersUI==null) {
-            loge(logId, "TowersUI is null => no-op");
+            loge(logId, "TowersUI is null => Can't enable TowersUI.");
         } else {
             towersUI.SetActive(true);
+        }
+        if(goldUI==null) {
+            loge(logId, "GoldUI is null => Can't enable GoldUI.");
+        } else {
+            goldUI.SetActive(true);
         }
     }
     private void HideInGameUI() {
         string logId = "HideInGameUI";
         if(towersUI==null) {
-            loge(logId, "TowersUI is null => no-op");
+            loge(logId, "TowersUI is null => Can't disable TowersUI.");
         } else {
             towersUI.SetActive(false);
+        }
+        if(goldUI==null) {
+            loge(logId, "GoldUI is null => Can't disable GoldUI.");
+        } else {
+            goldUI.SetActive(false);
         }
     }
     private void UpdateGoldAmountText() {
@@ -49,7 +60,7 @@ public class UIManager : NinjaMonoBehaviour {
             return;
         }
         int amountOfGold = ResourcesManager.Instance.CurrentGoldAmount;
-        logd(logId,"Setting GoldAmounText to " + amountOfGold);
+        logd(logId,"Setting GoldAmountText to " + amountOfGold);
         goldAmountText.text = amountOfGold.ToString();
     }
 }

@@ -10,8 +10,8 @@ public class StartMenu : Menu {
     private void SetStartGameEventListeners() {
         string logId = "SetStartGameEventListeners";
         logd(logId, "Setting StartGameEvent Listeners");
-        GameManager.OnGameStart -= () => Close();
-        GameManager.OnGameStart += () => Close();
+        GameManager.OnStartGame -= () => Close();
+        GameManager.OnStartGame += () => Close();
     }
     public void OnStartButtonClick() {
         string logId = "OnStartButtonClick";
