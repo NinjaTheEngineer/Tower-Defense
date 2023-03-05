@@ -95,6 +95,36 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &3337216624732194199
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5590921216415229104}
+  m_Layer: 0
+  m_Name: ShootingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5590921216415229104
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3337216624732194199}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5644243352809130408}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5644243352384072715
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,6 +250,7 @@ Transform:
   m_Children:
   - {fileID: 5644243352384072716}
   - {fileID: 5956155145523953447}
+  - {fileID: 5590921216415229104}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -238,3 +269,11 @@ MonoBehaviour:
   currentState: 0
   blueprintVisu: {fileID: 3242372412782779208}
   placedVisu: {fileID: 5644243352384072715}
+  shootingRadius: 5
+  shootingDelay: 1
+  shootingPoint: {fileID: 5590921216415229104}
+  projectilePrefab: {fileID: 2858218657050053078, guid: b259971e70bc80d49b15d25fa2db0b36, type: 3}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  canShoot: 1

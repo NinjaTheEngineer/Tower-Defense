@@ -60,7 +60,7 @@ public class UIManager : NinjaMonoBehaviour {
             return;
         }
         int amountOfGold = ResourcesManager.Instance.CurrentGoldAmount;
-        logd(logId,"Setting GoldAmountText to " + amountOfGold);
+        logt(logId,"Setting GoldAmountText to " + amountOfGold);
         goldAmountText.text = amountOfGold.ToString();
     }
 }

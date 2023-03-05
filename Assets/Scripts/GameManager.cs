@@ -29,6 +29,7 @@ public class GameManager : NinjaMonoBehaviour {
     public void StartGame() {
         string logId = "StartGame";
         currentState = GameState.Started;
+        logd(logId, "Invoking OnStartGame");
         InvokeOnStartGame();
     }
     private void InvokeOnStartGame() {
@@ -37,7 +38,7 @@ public class GameManager : NinjaMonoBehaviour {
             logw(logId, "No listeneres registered for OnStartGame event => no-op");
             return;
         }
-        logd(logId, "Invoking OnStartGame");
+        logd(logId, "Invoke OnStartGame");
         OnStartGame.Invoke();
     }
     private void Update() {

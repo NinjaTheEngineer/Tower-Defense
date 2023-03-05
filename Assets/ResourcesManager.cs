@@ -5,7 +5,7 @@ using UnityEngine;
 public class ResourcesManager : NinjaMonoBehaviour {
     public int maxGoldAmount;
     public float goldEarnTime;
-    private float goldLastEarnTime = 0;
+    private float lastGoldEarnTime = 0;
     private int _currentGoldAmount;
     public int CurrentGoldAmount {
         get => _currentGoldAmount;
@@ -49,13 +49,13 @@ public class ResourcesManager : NinjaMonoBehaviour {
     }
     private void HandleGoldGeneration() {
         string logId = "HandleGoldGeneration";
-        float timeSinceGoldEarned = Time.realtimeSinceStartup-goldLastEarnTime; 
+        float timeSinceGoldEarned = Time.realtimeSinceStartup-lastGoldEarnTime; 
         if(goldEarnTime < timeSinceGoldEarned) {
             CurrentGoldAmount += 1;
-            logd(logId, "TimeSinceGoldEarned="+timeSinceGoldEarned+ " CurrentGoldAmount="+CurrentGoldAmount+" => Invoke OnGoldEarned");
-            goldLastEarnTime = Time.realtimeSinceStartup;
+            logt(logId, "TimeSinceGoldEarned="+timeSinceGoldEarned+ " CurrentGoldAmount="+CurrentGoldAmount+" => Invoke OnGoldEarned");
+            lastGoldEarnTime = Time.realtimeSinceStartup;
         } else {
-            logt(logId, "GoldLastEarnTime="+goldLastEarnTime+" TimeSinceGoldEarned="+timeSinceGoldEarned+ " CurrentGoldAmount="+CurrentGoldAmount+" => Not generating gold");
+            logt(logId, "LastGoldEarnTime="+lastGoldEarnTime+" TimeSinceGoldEarned="+timeSinceGoldEarned+ " CurrentGoldAmount="+CurrentGoldAmount+" => Not generating gold");
         }
     }
     private void InvokeOnGoldUpdated() {

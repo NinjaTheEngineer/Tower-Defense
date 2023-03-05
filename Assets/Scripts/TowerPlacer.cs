@@ -30,7 +30,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Alpha1) && towerBlueprint==null) {
             InstantiateTowerBlueprint();
         }
-        if(towerBlueprint && towerBlueprint.BeingPlaced) {
+        if(towerBlueprint && towerBlueprint.IsBeingPlaced) {
             HandleTowerBlueprintPosition();
         }
         if(Input.GetMouseButtonDown(0) && towerBlueprint!=null) {
