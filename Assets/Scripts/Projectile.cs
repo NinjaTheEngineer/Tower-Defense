@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Projectile : NinjaMonoBehaviour {
     public float speed = 10f;
-    public float damage = 10f;
+    public int damage = 10;
     public float collisionCheckDelay = 0.1f;
     private float lastCollisionCheckTime;
     private Transform target;
@@ -33,8 +33,14 @@ public class Projectile : NinjaMonoBehaviour {
     }
     private void HandleEnemyCollision() {
         string logId = "HandleEnemyCollision";
-        float distance = Vector3.Distance(transform.position, target.position);
+        float distance = (target.position - transform.position).magnitude;
         if(distance < 0.15f) {
+            Enemy currentEnemy = target.GetComponent<Enemy>();
+            if(currentEnemy==null) {
+                logw(logId, "Target doesn't is NOT an Enemy!");
+            } else {
+                currentEnemy.TakeDamage(damage);
+            }
             logd(logId, "Target hit distance="+distance+" => Destroying self");
             Destroy(gameObject);
         } else {
