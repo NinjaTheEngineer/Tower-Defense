@@ -35,10 +35,35 @@ public class Path : NinjaMonoBehaviour {
         int currentIndex = waypoints.IndexOf(currentWaypoint);
         if(currentIndex==waypointsCount-1) {
             logw(logId, "Current index is the last index => returning null");
-            return null;
+            return currentWaypoint;
         }
         Transform nextWaypoint = waypoints[currentIndex+1];
         logd(logId, "CurrentIndex="+currentIndex+ " returning NextWaypoint="+nextWaypoint);
         return nextWaypoint;
+    }
+    public Core Core {
+        get {
+            string logId = "Core_get";
+            int waypointsCount = waypoints.Count;
+            if(waypointsCount<=0) {
+                logw(logId, "Tried to get next waypoint while waypointsCount="+waypointsCount+"=> returning null");
+                return null;
+            }
+            Transform coreWaypoint = waypoints[waypointsCount-1];
+            Core core = coreWaypoint.GetComponent<Core>();
+            if(core==null) {
+                logd(logId, "Core not found on last waypoint => Searching in all waypoints.");
+                for (int i = 0; i < waypointsCount; i++) {
+                    coreWaypoint = waypoints[i];
+                    core = coreWaypoint.GetComponent<Core>();
+                    if(core!=null) {
+                        logd(logId, "Core found at "+coreWaypoint+" => breaking search.");
+                        break;
+                    }
+                }
+            }
+            logd(logId, "Returning "+coreWaypoint.name+" as Core");
+            return core;
+        }
     }
 }

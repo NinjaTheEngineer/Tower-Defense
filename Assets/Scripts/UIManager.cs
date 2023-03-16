@@ -7,12 +7,15 @@ public class UIManager : NinjaMonoBehaviour {
     public GameObject towersUI;
     public GameObject goldUI;
     public TextMeshProUGUI goldAmountText;
+    public GameObject coreHealthUI;
+    public TextMeshProUGUI coreHealthAmountText;
     private void Awake() {
         HideInGameUI();
     }
     private void Start() {
         SetOnStartGameEventListeners();
         SetOnGoldEarnedEventListeners();
+        SetOnCoreHealthChangeEventListeners();
         UpdateGoldAmountText();
     }
     private void SetOnStartGameEventListeners() {
@@ -23,9 +26,15 @@ public class UIManager : NinjaMonoBehaviour {
     }
     private void SetOnGoldEarnedEventListeners() {
         string logId = "SetOnGoldEarnedEventListeners";
-        logd(logId, "Setting StartGameEvent Listeners");
+        logd(logId, "Setting OnGoldUpdated Listeners");
         ResourcesManager.OnGoldUpdated -= () => UpdateGoldAmountText();
         ResourcesManager.OnGoldUpdated += () => UpdateGoldAmountText();
+    }
+    private void SetOnCoreHealthChangeEventListeners() {
+        string logId = "SetOnCoreHealthChangeEventListeners";
+        logd(logId, "Setting StartGameEvent Listeners");
+        Core.OnHealthAmountChange -= (int healthAmount) => UpdateCoreHealthAmountText(healthAmount);
+        Core.OnHealthAmountChange += (int healthAmount) => UpdateCoreHealthAmountText(healthAmount);
     }
     private void ShowInGameUI() {
         string logId = "ShowInGameUI";
@@ -38,6 +47,11 @@ public class UIManager : NinjaMonoBehaviour {
             loge(logId, "GoldUI is null => Can't enable GoldUI.");
         } else {
             goldUI.SetActive(true);
+        }
+        if(coreHealthUI==null) {
+            loge(logId, "CoreHealthUI is null => Can't enable CoreHealthUI.");
+        } else {
+            coreHealthUI.SetActive(true);
         }
     }
     private void HideInGameUI() {
@@ -52,6 +66,11 @@ public class UIManager : NinjaMonoBehaviour {
         } else {
             goldUI.SetActive(false);
         }
+        if(coreHealthUI==null) {
+            loge(logId, "CoreHealthUI is null => Can't disable CoreHealthUI.");
+        } else {
+            coreHealthUI.SetActive(false);
+        }
     }
     private void UpdateGoldAmountText() {
         string logId = "UpdateGoldAmountText";
@@ -62,5 +81,14 @@ public class UIManager : NinjaMonoBehaviour {
         int amountOfGold = ResourcesManager.Instance.CurrentGoldAmount;
         logt(logId,"Setting GoldAmountText to " + amountOfGold);
         goldAmountText.text = amountOfGold.ToString();
+    }
+    private void UpdateCoreHealthAmountText(int healthAmount) {
+        string logId = "UpdateCoreHealthAmountText";
+        if(coreHealthAmountText==null) {
+            loge(logId,"CoreHealthAmountText is null => no-op");
+            return;
+        }
+        logt(logId,"Setting CoreHealthAmountText to " + healthAmount);
+        coreHealthAmountText.text = healthAmount.ToString();
     }
 }

@@ -7,6 +7,8 @@ public class Enemy : NinjaMonoBehaviour {
     public float speed = 5f;
     public int maxHealth = 50;
     public float waypointTargetDistance = 0.25f;
+    public float distanceToDamageCore = 1f;
+    public int damage;
     private int _currentHealth;
     public int CurrentHealth {
         get => _currentHealth;
@@ -22,6 +24,7 @@ public class Enemy : NinjaMonoBehaviour {
     }
     private Path path;
     private Transform _currentWaypoint;
+    public Core core;
     public Transform CurrentWaypoint {
         get => _currentWaypoint;
         private set {
@@ -40,6 +43,9 @@ public class Enemy : NinjaMonoBehaviour {
     private void Awake() {
         CurrentHealth = maxHealth;
     }
+    private void Start() {
+        StartCoroutine(IsCloseToCoreRoutine());
+    }
     private void Update() {
         string logId = "Update";
         if(!GameManager.Instance.GameStarted) {
@@ -51,12 +57,44 @@ public class Enemy : NinjaMonoBehaviour {
             }
             logd(logId, "CurrentWaypoint is null => Tried to set waypoint");
             CurrentWaypoint = path.NextWaypoint();
+            core = path.Core;
             return;
         }
         HandleMovement();
         float distanceToWaypoint = (CurrentWaypoint.position - transform.position).magnitude;
         if(distanceToWaypoint <= waypointTargetDistance) {
             CurrentWaypoint = path.NextWaypoint(CurrentWaypoint);
+        }
+    }
+    private IEnumerator IsCloseToCoreRoutine() {
+        string logId = "IsCloseToCoreRoutine";
+        while(true) {
+            float distanceToCore = DistanceToCore;
+            if(distanceToCore < 0) {
+                logd(logId,"Distance to core is "+distanceToCore+" => continuing");
+                yield return new WaitForSecondsRealtime(0.5f);
+                continue;
+            }
+            if(distanceToCore < distanceToDamageCore) {
+                logd(logId,"Distance to core is "+distanceToCore+" => Damaging core and destroying self.");
+                core.Damage(damage);
+                Destroy(gameObject);
+            } else {
+                logd(logId,"Distance to core is "+distanceToCore+" => continuing");
+            }
+            yield return new WaitForSecondsRealtime(0.1f);
+        }
+    }
+    private float DistanceToCore {
+        get {
+            string logId = "DistanceToCore_get";
+            if(core==null) {
+                logd(logId, "Core is null => returning -1");
+                return -1;    
+            }
+            float distanceToCore = (core.transform.position - transform.position).magnitude;
+            logd(logId, "Returning "+distanceToCore);
+            return distanceToCore;
         }
     }
     private void HandleMovement() {
