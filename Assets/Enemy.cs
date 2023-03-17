@@ -5,22 +5,13 @@ using UnityEngine;
 
 public class Enemy : NinjaMonoBehaviour {
     public float speed = 5f;
-    public int maxHealth = 50;
     public float waypointTargetDistance = 0.25f;
     public float distanceToDamageCore = 1f;
     public int damage;
-    private int _currentHealth;
-    public int CurrentHealth {
-        get => _currentHealth;
-        private set {
-            string logId = "CurrentHealth_set";
-            if(value==_currentHealth) {
-                logd(logId, "CurrentHealth is already " + value + " => returning");
-                return;
-            }
-            logd(logId, "Setting CurrentHealth from " + _currentHealth + " to " + value);
-            _currentHealth = value;
-        }
+    [SerializeField]
+    private Health _health;
+    public Health Health {
+        get => _health;
     }
     private Path path;
     private Transform _currentWaypoint;
@@ -29,8 +20,9 @@ public class Enemy : NinjaMonoBehaviour {
         get => _currentWaypoint;
         private set {
             string logId = "CurrentWaypoint_set";
-            if(_currentWaypoint==null) {
+            if(value==null) {
                 logw(logId, "Tried to set CurrentWaypoint from " + _currentWaypoint.logf()+ " to " + value.logf());
+                return;
             }
             if(value==_currentWaypoint) {
                 logd(logId, "CurrentWaypoint is already " + value.logf() + " => returning");
@@ -41,7 +33,7 @@ public class Enemy : NinjaMonoBehaviour {
         }
     }
     private void Awake() {
-        CurrentHealth = maxHealth;
+        _health = _health??GetComponent<Health>();
     }
     private void Start() {
         StartCoroutine(IsCloseToCoreRoutine());
@@ -77,10 +69,10 @@ public class Enemy : NinjaMonoBehaviour {
             }
             if(distanceToCore < distanceToDamageCore) {
                 logd(logId,"Distance to core is "+distanceToCore+" => Damaging core and destroying self.");
-                core.Damage(damage);
+                core.TakeDamage(damage);
                 Destroy(gameObject);
             } else {
-                logd(logId,"Distance to core is "+distanceToCore+" => continuing");
+                logt(logId,"Distance to core is "+distanceToCore+" => continuing");
             }
             yield return new WaitForSecondsRealtime(0.1f);
         }
@@ -93,7 +85,7 @@ public class Enemy : NinjaMonoBehaviour {
                 return -1;    
             }
             float distanceToCore = (core.transform.position - transform.position).magnitude;
-            logd(logId, "Returning "+distanceToCore);
+            logt(logId, "Returning "+distanceToCore);
             return distanceToCore;
         }
     }
@@ -103,12 +95,14 @@ public class Enemy : NinjaMonoBehaviour {
     }
     public void TakeDamage(int damage) {
         string logId = "TakeDamage";
-        if(damage<=0) {
-            logd(logId, "Can't take damage="+damage+" => no-op");
+        if(_health==null) {
+            logd(logId, "Health component is missing => no-op");
             return;
         }
-        CurrentHealth -= damage;
-        if(CurrentHealth<=0) {
+        logd(logId, "Taking damage of "+damage);
+        _health.CurrentHealth -= damage;
+        int currentHealth = _health.CurrentHealth;
+        if(currentHealth<=0) {
             logd(logId, "Enemy is dead => Destroying self");
             Destroy(gameObject);
         }

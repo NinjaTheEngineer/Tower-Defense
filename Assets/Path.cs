@@ -4,7 +4,37 @@ using UnityEngine;
 
 public class Path : NinjaMonoBehaviour {
     public List<Transform> waypoints;
-
+    private Core _core;
+    public Core Core {
+        get {
+            string logId = "Core_get";
+            if(_core!=null) {
+                logd(logId, "Returning "+_core.name+".");
+                return _core;
+            }
+            logd(logId, "Core is null => searching for core.");
+            int waypointsCount = waypoints.Count;
+            if(waypointsCount<=0) {
+                logw(logId, "Tried to get next waypoint while waypointsCount="+waypointsCount+"=> returning null");
+                return null;
+            }
+            Transform coreWaypoint = waypoints[waypointsCount-1];
+            _core = coreWaypoint.GetComponent<Core>();
+            if(_core==null) {
+                logd(logId, "Core not found on last waypoint => Searching in all waypoints.");
+                for (int i = 0; i < waypointsCount; i++) {
+                    coreWaypoint = waypoints[i];
+                    _core = coreWaypoint.GetComponent<Core>();
+                    if(_core!=null) {
+                        logd(logId, "Core found at "+coreWaypoint+" => breaking search.");
+                        break;
+                    }
+                }
+            }
+            logd(logId, "Returning "+coreWaypoint.name+" as Core");
+            return _core;
+        }
+    }
     private void Start() {
         FetchWaypoints();
     }
@@ -29,7 +59,7 @@ public class Path : NinjaMonoBehaviour {
             return null;
         }
         if(currentWaypoint==null || !waypoints.Contains(currentWaypoint)) {
-            logw(logId, "Path doesn't contain current waypoint => returning first waypoint");
+            logt(logId, "Path doesn't contain current waypoint => returning first waypoint");
             return waypoints[0];
         }
         int currentIndex = waypoints.IndexOf(currentWaypoint);
@@ -38,32 +68,7 @@ public class Path : NinjaMonoBehaviour {
             return currentWaypoint;
         }
         Transform nextWaypoint = waypoints[currentIndex+1];
-        logd(logId, "CurrentIndex="+currentIndex+ " returning NextWaypoint="+nextWaypoint);
+        logt(logId, "CurrentIndex="+currentIndex+ " returning NextWaypoint="+nextWaypoint);
         return nextWaypoint;
-    }
-    public Core Core {
-        get {
-            string logId = "Core_get";
-            int waypointsCount = waypoints.Count;
-            if(waypointsCount<=0) {
-                logw(logId, "Tried to get next waypoint while waypointsCount="+waypointsCount+"=> returning null");
-                return null;
-            }
-            Transform coreWaypoint = waypoints[waypointsCount-1];
-            Core core = coreWaypoint.GetComponent<Core>();
-            if(core==null) {
-                logd(logId, "Core not found on last waypoint => Searching in all waypoints.");
-                for (int i = 0; i < waypointsCount; i++) {
-                    coreWaypoint = waypoints[i];
-                    core = coreWaypoint.GetComponent<Core>();
-                    if(core!=null) {
-                        logd(logId, "Core found at "+coreWaypoint+" => breaking search.");
-                        break;
-                    }
-                }
-            }
-            logd(logId, "Returning "+coreWaypoint.name+" as Core");
-            return core;
-        }
     }
 }
