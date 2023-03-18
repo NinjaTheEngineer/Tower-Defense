@@ -8,11 +8,17 @@ public class GameManager : NinjaMonoBehaviour {
         None,
         Started,
         Paused,
-        Finished
+        Ended
     }
     public bool GameStarted => currentState==GameState.Started;
     public static GameManager Instance;
     public static System.Action OnStartGame;
+    public static System.Action OnEndGame;
+    [SerializeField]
+    private Path _path;
+    public Path Path => _path;
+    [SerializeField]
+    private EnemySpawner enemySpawner;
 
     private void Awake() {
         string logId = "Awake";
@@ -28,18 +34,31 @@ public class GameManager : NinjaMonoBehaviour {
 
     public void StartGame() {
         string logId = "StartGame";
-        currentState = GameState.Started;
-        logd(logId, "Invoking OnStartGame");
-        InvokeOnStartGame();
-    }
-    private void InvokeOnStartGame() {
-        string logId = "InvokeOnStartGame";
         if(OnStartGame==null) {
             logw(logId, "No listeneres registered for OnStartGame event => no-op");
             return;
         }
+        if(_path && enemySpawner) {
+            logd(logId, "Instantiating EnemySpawner.");
+            enemySpawner = Instantiate(enemySpawner);
+        } else {
+            logd(logId, "Path="+_path+" EnemySpawner="+enemySpawner.logf()+" => no-op");
+        }
+        Core.OnCoreDestroyed -= () => EndGame();
+        Core.OnCoreDestroyed += () => EndGame();
         logd(logId, "Invoke OnStartGame");
         OnStartGame.Invoke();
+        currentState = GameState.Started;
+    }
+    public void EndGame() {
+        string logId = "EndGame";
+        currentState = GameState.Ended;
+        if(OnEndGame==null) {
+            logw(logId, "No listeneres registered for OnEndGame event => no-op");
+            return;
+        }
+        logd(logId, "Invoke OnEndGame");
+        OnEndGame.Invoke();
     }
     private void Update() {
         //string logId = "Update";

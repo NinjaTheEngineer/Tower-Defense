@@ -28,7 +28,7 @@ public class Enemy : NinjaMonoBehaviour {
                 logd(logId, "CurrentWaypoint is already " + value.logf() + " => returning");
                 return;
             }
-            logd(logId, "Setting CurrentWaypoint from " + _currentWaypoint.logf() + " to " + value.logf());
+            logt(logId, "Setting CurrentWaypoint from " + _currentWaypoint?.name.logf() + " to " + value?.name.logf());
             _currentWaypoint = value;
         }
     }
@@ -36,7 +36,14 @@ public class Enemy : NinjaMonoBehaviour {
         _health = _health??GetComponent<Health>();
     }
     private void Start() {
-        StartCoroutine(IsCloseToCoreRoutine());
+        string logId = "Start";
+        if(path==null) {
+            logw("Path is null => no-op");
+            return;
+        }
+        core = path.Core;
+        CurrentWaypoint = path.NextWaypoint();
+        StartCoroutine(CoreAttackRoutine());
     }
     private void Update() {
         string logId = "Update";
@@ -58,9 +65,9 @@ public class Enemy : NinjaMonoBehaviour {
             CurrentWaypoint = path.NextWaypoint(CurrentWaypoint);
         }
     }
-    private IEnumerator IsCloseToCoreRoutine() {
-        string logId = "IsCloseToCoreRoutine";
-        while(true) {
+    private IEnumerator CoreAttackRoutine() {
+        string logId = "CoreAttackRoutine";
+        while(core) {
             float distanceToCore = DistanceToCore;
             if(distanceToCore < 0) {
                 logd(logId,"Distance to core is "+distanceToCore+" => continuing");
@@ -76,6 +83,7 @@ public class Enemy : NinjaMonoBehaviour {
             }
             yield return new WaitForSecondsRealtime(0.1f);
         }
+        logd(logId,"Core is null => Breaking routine.");
     }
     private float DistanceToCore {
         get {

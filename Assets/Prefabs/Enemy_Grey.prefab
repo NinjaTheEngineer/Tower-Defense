@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5a26de236ce89e94b963be8fa2b7ade6, type: 2}
+  - {fileID: 2100000, guid: 8d530ffe6c4968843806085897955b9d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 7485210740399022735}
   - component: {fileID: 1035856616188071773}
   m_Layer: 7
-  m_Name: Enemy
+  m_Name: Enemy_Grey
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -128,10 +128,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c9f427c0154d41498b68048493ee1ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3.5
+  speed: 2
   waypointTargetDistance: 0.25
   distanceToDamageCore: 1
-  damage: 13
+  damage: 20
   _health: {fileID: 1035856616188071773}
   core: {fileID: 0}
 --- !u!65 &7485210740399022735
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25b2c069771d3e94c96ce10e9e5d895d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 40
+  maxHealth: 100
 --- !u!1001 &5269321307775257826
 PrefabInstance:
   m_ObjectHideFlags: 0

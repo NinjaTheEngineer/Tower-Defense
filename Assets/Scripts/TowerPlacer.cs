@@ -80,7 +80,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
     private void InvokeOnTowerPlaced() {
         string logId = "InvokeOnGoldUpdated";
         if(OnTowerPlaced==null) {
-            logw(logId, "No listeneres registered for OnGameStart event => no-op");
+            logw(logId, "No listeneres registered for OnTowerPlaced event => no-op");
             return;
         }
         OnTowerPlaced.Invoke();

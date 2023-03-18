@@ -19,7 +19,7 @@ public class Health : NinjaMonoBehaviour {
                 logd(logId, "Tried to set Health to same value of "+value+" => returning");
                 return;
             }
-            if(_currentHealth-value < 0) {
+            if(value < 0) {
                 logd(logId, "Tried to set Health below 0 => setting to 0");
                 value = 0;
             }

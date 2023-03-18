@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Path : NinjaMonoBehaviour {
     public List<Transform> waypoints;
+    [SerializeField]
     private Core _core;
     public Core Core {
         get {

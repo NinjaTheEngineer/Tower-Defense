@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Core : NinjaMonoBehaviour {
     public static System.Action<int> OnHealthAmountChange;
+    public static System.Action OnCoreDestroyed;
     [SerializeField]
     private Health _health;
     public Health Health {
@@ -26,7 +27,12 @@ public class Core : NinjaMonoBehaviour {
             OnHealthAmountChange.Invoke(currentHealth);
         }
         if(currentHealth<=0) {
-            logd(logId, "Enemy is dead => Destroying self");
+            logd(logId, "Enemy is dead => Invoking OnCoreDestroyed and destroying self.");
+            if(OnCoreDestroyed==null) {
+                logw(logId, "No listeneres registered for OnCoreDestroyed event => no-op");
+            } else {
+                OnCoreDestroyed.Invoke();
+            }
             Destroy(gameObject);
         }
     }
