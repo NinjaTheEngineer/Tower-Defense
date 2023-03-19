@@ -21,20 +21,20 @@ public class UIManager : NinjaMonoBehaviour {
     private void SetOnStartGameEventListeners() {
         string logId = "SetOnStartGameEventListeners";
         logd(logId, "Setting StartGameEvent Listeners");
-        GameManager.OnStartGame -= () => ShowInGameUI();
-        GameManager.OnStartGame += () => ShowInGameUI();
+        GameManager.OnStartGame -= ShowInGameUI;
+        GameManager.OnStartGame += ShowInGameUI;
     }
     private void SetOnGoldEarnedEventListeners() {
         string logId = "SetOnGoldEarnedEventListeners";
         logd(logId, "Setting OnGoldUpdated Listeners");
-        ResourcesManager.OnGoldUpdated -= () => UpdateGoldAmountText();
-        ResourcesManager.OnGoldUpdated += () => UpdateGoldAmountText();
+        ResourcesManager.OnGoldUpdated -= UpdateGoldAmountText;
+        ResourcesManager.OnGoldUpdated += UpdateGoldAmountText;
     }
     private void SetOnCoreHealthChangeEventListeners() {
         string logId = "SetOnCoreHealthChangeEventListeners";
         logd(logId, "Setting StartGameEvent Listeners");
-        Core.OnHealthAmountChange -= (int healthAmount) => UpdateCoreHealthAmountText(healthAmount);
-        Core.OnHealthAmountChange += (int healthAmount) => UpdateCoreHealthAmountText(healthAmount);
+        Core.OnHealthAmountChange -= UpdateCoreHealthAmountText;
+        Core.OnHealthAmountChange += UpdateCoreHealthAmountText;
     }
     private void ShowInGameUI() {
         string logId = "ShowInGameUI";

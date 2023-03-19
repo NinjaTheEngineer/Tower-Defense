@@ -13,11 +13,13 @@ public class GameManager : NinjaMonoBehaviour {
     public bool GameStarted => currentState==GameState.Started;
     public static GameManager Instance;
     public static System.Action OnStartGame;
-    public static System.Action OnEndGame;
+    public static System.Action OnVictory;
+    public static System.Action OnDefeat;
     [SerializeField]
     private Path _path;
     public Path Path => _path;
     [SerializeField]
+    private EnemySpawner enemySpawnerPrefab;
     private EnemySpawner enemySpawner;
 
     private void Awake() {
@@ -32,34 +34,56 @@ public class GameManager : NinjaMonoBehaviour {
         currentState = GameState.None;
     }
 
-    public void StartGame() {
-        string logId = "StartGame";
+    public void InitializeGame() {
+        string logId = "InitializeGame";
         if(OnStartGame==null) {
             logw(logId, "No listeneres registered for OnStartGame event => no-op");
             return;
         }
-        if(_path && enemySpawner) {
+        if(enemySpawner) {
+            Destroy(enemySpawner);
+        }
+        if(_path && enemySpawnerPrefab) {
             logd(logId, "Instantiating EnemySpawner.");
-            enemySpawner = Instantiate(enemySpawner);
+            enemySpawner = Instantiate(enemySpawnerPrefab);
+            enemySpawner.name = "EnemySpawner_"+Time.deltaTime;    
         } else {
             logd(logId, "Path="+_path+" EnemySpawner="+enemySpawner.logf()+" => no-op");
         }
-        Core.OnCoreDestroyed -= () => EndGame();
-        Core.OnCoreDestroyed += () => EndGame();
+        _path.Core.Restart();
+        Core.OnCoreDestroyed -= GameLost;
+        Core.OnCoreDestroyed += GameLost;
         logd(logId, "Invoke OnStartGame");
         OnStartGame.Invoke();
         currentState = GameState.Started;
     }
-    public void EndGame() {
-        string logId = "EndGame";
-        currentState = GameState.Ended;
-        if(OnEndGame==null) {
-            logw(logId, "No listeneres registered for OnEndGame event => no-op");
+    public void GameWon() {
+        string logId = "GameWon";
+        if(OnVictory==null) {
+            logw(logId, "No listeneres registered for OnVictory event => no-op");
             return;
         }
-        logd(logId, "Invoke OnEndGame");
-        OnEndGame.Invoke();
+        logd(logId, "Invoke OnVictory");
+        OnGameEnded();
+        OnVictory.Invoke();
     }
+    public void GameLost() {
+        string logId = "EndGame";
+        if(OnDefeat==null) {
+            logw(logId, "No listeneres registered for OnDefeat event => no-op");
+            return;
+        }
+        logd(logId, "Invoke OnDefeat");
+        OnGameEnded();
+        OnDefeat.Invoke(); 
+    }
+    private void OnGameEnded() {
+        string logId = "OnGameEnded";
+        logd(logId, "Destroy EnemySpawner="+enemySpawner.logf()+" => Set CurrentState to Ended.");
+        currentState = GameState.Ended;
+        Destroy(enemySpawner.gameObject);
+    }
+    
     private void Update() {
         //string logId = "Update";
         if(currentState!=GameState.Started) {

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Health : NinjaMonoBehaviour {
-
     [SerializeField]
     private int maxHealth = 50;
     public int MaxHealth => maxHealth;
     private int _currentHealth;
     private void Start() {
+        Reset();
+    }
+    public void Reset() {
         _currentHealth = maxHealth;
     }
     public int CurrentHealth {

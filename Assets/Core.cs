@@ -27,13 +27,20 @@ public class Core : NinjaMonoBehaviour {
             OnHealthAmountChange.Invoke(currentHealth);
         }
         if(currentHealth<=0) {
-            logd(logId, "Enemy is dead => Invoking OnCoreDestroyed and destroying self.");
             if(OnCoreDestroyed==null) {
                 logw(logId, "No listeneres registered for OnCoreDestroyed event => no-op");
             } else {
+                logd(logId, "Core lost all health => Invoking OnCoreDestroyed and disabling self.");
                 OnCoreDestroyed.Invoke();
             }
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
+    }
+    public void Restart() {
+        string logId = "Restart";
+        logd(logId, "Restarting Core => Activating and resetting health.");
+        gameObject.SetActive(true);
+        _health.Reset();
+        OnHealthAmountChange.Invoke(_health.CurrentHealth);
     }
 }

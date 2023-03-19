@@ -108,6 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0da247cb1524641b442fe04ba37681, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  damage: 10
-  movementUpdateDelay: 1
+  speed: 20
+  damage: 50
+  collisionCheckDelay: 0.1

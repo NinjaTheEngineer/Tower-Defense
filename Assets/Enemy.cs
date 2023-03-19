@@ -9,13 +9,11 @@ public class Enemy : NinjaMonoBehaviour {
     public float distanceToDamageCore = 1f;
     public int damage;
     [SerializeField]
-    private Health _health;
-    public Health Health {
-        get => _health;
-    }
+    private Health health;
     private Path path;
     private Transform _currentWaypoint;
     public Core core;
+    public System.Action<Enemy> OnDeath;
     public Transform CurrentWaypoint {
         get => _currentWaypoint;
         private set {
@@ -33,12 +31,12 @@ public class Enemy : NinjaMonoBehaviour {
         }
     }
     private void Awake() {
-        _health = _health??GetComponent<Health>();
+        health = health??GetComponent<Health>();
     }
     private void Start() {
         string logId = "Start";
         if(path==null) {
-            logw("Path is null => no-op");
+            logw(logId,"Path is null => no-op");
             return;
         }
         core = path.Core;
@@ -103,15 +101,16 @@ public class Enemy : NinjaMonoBehaviour {
     }
     public void TakeDamage(int damage) {
         string logId = "TakeDamage";
-        if(_health==null) {
+        if(health==null) {
             logd(logId, "Health component is missing => no-op");
             return;
         }
         logd(logId, "Taking damage of "+damage);
-        _health.CurrentHealth -= damage;
-        int currentHealth = _health.CurrentHealth;
+        health.CurrentHealth -= damage;
+        int currentHealth = health.CurrentHealth;
         if(currentHealth<=0) {
             logd(logId, "Enemy is dead => Destroying self");
+            OnDeath.Invoke(this);
             Destroy(gameObject);
         }
     }

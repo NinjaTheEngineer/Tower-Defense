@@ -12,6 +12,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
     public LayerMask placeableLayer;
     public System.Action OnTowerPlaced;
     public bool HasEnoughGoldForTower => ResourcesManager.Instance.CurrentGoldAmount >= towerPrice;
+    public List<Tower> towersPlaced;
     private void Awake() {
         string logId = "Awake";
         if(Instance==null) {
@@ -20,6 +21,24 @@ public class TowerPlacer : NinjaMonoBehaviour {
         } else {
             logw(logId, "Singleton Instance already set => Destroying this GameObject.");
             Destroy(gameObject);
+        }
+        GameManager.OnStartGame -= DestroyPlacedTowers;
+        GameManager.OnStartGame += DestroyPlacedTowers;
+    }
+    private void DestroyPlacedTowers() {
+        string logId = "DestroyPlacedTowers";
+        int towersPlacedCount = towersPlaced.Count;
+        if(towersPlacedCount==0) {
+            logd(logId, "No towers to destroy => returning");
+            return;
+        }
+        for (int i = 0; i < towersPlacedCount; i++) {
+            Tower currentTower = towersPlaced[i];
+            if(currentTower==null || !currentTower.isActiveAndEnabled) {
+                logd(logId, "Skipping Tower="+currentTower.logf()+" on index="+i);
+                continue;
+            }
+            Destroy(currentTower.gameObject);
         }
     }
     private void Update() {
@@ -72,6 +91,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
             logd(logId, "TowerBlueprint="+towerBlueprint+" => Place");
             InvokeOnTowerPlaced();
             towerBlueprint.Place();
+            towersPlaced.Add(towerBlueprint);
             towerBlueprint = null;
         } else {
             logd(logId, "Not even gold for tower => no-op");

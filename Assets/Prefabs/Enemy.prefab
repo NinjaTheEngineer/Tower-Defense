@@ -128,11 +128,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c9f427c0154d41498b68048493ee1ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3.5
+  speed: 17.82
   waypointTargetDistance: 0.25
   distanceToDamageCore: 1
-  damage: 13
-  _health: {fileID: 1035856616188071773}
+  damage: 151
+  health: {fileID: 0}
   core: {fileID: 0}
 --- !u!65 &7485210740399022735
 BoxCollider:

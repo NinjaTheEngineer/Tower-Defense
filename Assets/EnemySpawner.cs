@@ -9,7 +9,10 @@ public class EnemySpawner : NinjaMonoBehaviour {
     public List<EnemyWave> enemyWaves;
     private int amountOfWavesLeft;
     private int totalWavesToSpawn;
+    private int enemiesDead = 0;
+    private int totalEnemiesToSpawn;
     private EnemyWave currentEnemyWave;
+    private List<Enemy> enemies = new List<Enemy>();
     [System.Serializable]
     public struct EnemyWave {
         public Enemy enemy;
@@ -18,13 +21,47 @@ public class EnemySpawner : NinjaMonoBehaviour {
         public float nextWaveDelay;
     }
     private void Awake() {
-        string logId = "Start";
+        string logId = "Awake";
         logd(logId, "Registering OnStartGame listeners.");
         path = GameManager.Instance.Path;
-        GameManager.OnStartGame -= () => StartEnemySpawn();
-        GameManager.OnStartGame += () => StartEnemySpawn();
-        GameManager.OnEndGame -= () => SpawningEnemies = false;
-        GameManager.OnEndGame += () => SpawningEnemies = false;
+        RegisterListeners();
+    }
+    private void RegisterListeners() {
+        string logId = "RegisterListeners";
+        logd(logId, " => Registering OnStartGame and OnDefeat events.");
+        GameManager.OnStartGame += StartEnemySpawn;
+        GameManager.OnDefeat += StopSpawningEnemies;
+    }
+    private void RemoveListeners() {
+        string logId = "OnDestroy";
+        logd(logId, " => Removing OnStartGame and OnDefeat events.");
+        GameManager.OnStartGame -= StartEnemySpawn;
+        GameManager.OnDefeat -= StopSpawningEnemies;
+    }
+    private void StopSpawningEnemies() => SpawningEnemies = false;
+    private void OnDestroy() {
+        string logId = "OnDestroy";
+        logd(logId, " => Remove Listeners");
+        RemoveListeners();
+    }
+    private void Reset() {
+        string logId = "Reset";
+        enemiesDead = 0;
+        enemiesSpawned = 0;
+        totalWavesToSpawn = enemyWaves.Count;
+        amountOfWavesLeft = totalWavesToSpawn;
+        for (int i = 0; i < totalWavesToSpawn; i++) {
+            totalEnemiesToSpawn+=enemyWaves[i].amount;
+        }
+        for (int i = 0; i < enemiesSpawned; i++) {
+            Enemy currentEnemy = enemies[i];
+            if(currentEnemy==null) {
+                logd(logId, "CurrentEnemy is null => continuing");
+                continue;
+            }
+            Destroy(currentEnemy);
+        }
+        enemies = new List<Enemy>();
     }
 
     private bool _spawningEnemies;
@@ -43,13 +80,11 @@ public class EnemySpawner : NinjaMonoBehaviour {
     }
     private void StartEnemySpawn() {
         string logId = "StartEnemySpawn";
-        path = GameManager.Instance.Path;
+        Reset();
         if(path==null) {
             logw(logId, "Path is null => no-op");
             return;
         }
-        totalWavesToSpawn = enemyWaves.Count;
-        amountOfWavesLeft = totalWavesToSpawn;
         if(totalWavesToSpawn<=0) {
             logw(logId, "Not enough waves to start.");
             return;
@@ -70,7 +105,7 @@ public class EnemySpawner : NinjaMonoBehaviour {
             if(enemiesSpawnedOnWave<=waveEnemiesSpawnAmount) {
                 enemiesSpawnedOnWave++;
                 Enemy currentEnemy = currentEnemyWave.enemy;
-                logd("Spawning Enemy="+currentEnemy+" Number="+enemiesSpawnedOnWave+" for Wave="+amountOfWavesLeft);
+                logd(logId, "Spawning Enemy="+currentEnemy+" Number="+enemiesSpawnedOnWave+" for Wave="+amountOfWavesLeft);
                 SpawnEnemy(currentEnemy);
                 yield return new WaitForSeconds(1f);
             }
@@ -78,14 +113,14 @@ public class EnemySpawner : NinjaMonoBehaviour {
                 amountOfWavesLeft--;
                 enemiesSpawnedOnWave = 0;
                 if(amountOfWavesLeft<0) {
-                    logd("There are no more waves to spawn. Victory!");
+                    logd(logId, "There are no more waves to spawn. Victory!");
                     //OnAllEnemyWavesSpawned.Invoke(); 
                     SpawningEnemies = false;
                     yield break;
                 }
                 yield return new WaitForSeconds(1f);
-                EnemyWave nextEnemyWave = enemyWaves[totalWavesToSpawn-amountOfWavesLeft];
-                logd("Changing Wave from "+currentEnemyWave+" to "+nextEnemyWave+" while AmountOfWavesLeft="+amountOfWavesLeft);
+                EnemyWave nextEnemyWave = enemyWaves[totalWavesToSpawn-amountOfWavesLeft-1];
+                logd(logId, "Changing Wave from "+currentEnemyWave+" to "+nextEnemyWave+" while AmountOfWavesLeft="+amountOfWavesLeft);
                 currentEnemyWave = nextEnemyWave;
                 continue;
             }
@@ -101,8 +136,18 @@ public class EnemySpawner : NinjaMonoBehaviour {
         }
         Transform firstWaypoint = path.waypoints[0];
         Enemy newEnemy = Instantiate(enemy, firstWaypoint.position, Quaternion.identity);
+        newEnemy.transform.parent = transform;
+        newEnemy.OnDeath -= OnEnemyDeath;
+        newEnemy.OnDeath += OnEnemyDeath;
         newEnemy.SetPath(path);
         enemiesSpawned++;
+        enemies.Add(newEnemy);
         lastSpawnTime = Time.realtimeSinceStartup;
+    }
+    private void OnEnemyDeath(Enemy enemy) {
+        enemiesDead++;
+        if(enemiesDead>=totalEnemiesToSpawn) {
+            GameManager.Instance.GameWon();
+        }
     }
 }
