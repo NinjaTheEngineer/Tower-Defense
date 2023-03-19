@@ -1574,7 +1574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waypoints: []
-  _core: {fileID: 0}
+  _core: {fileID: 1955386298}
 --- !u!4 &887269148
 Transform:
   m_ObjectHideFlags: 0
@@ -1634,6 +1634,7 @@ MonoBehaviour:
   placeableLayer:
     serializedVersion: 2
     m_Bits: 64
+  towersPlaced: []
 --- !u!4 &887567972
 Transform:
   m_ObjectHideFlags: 0
@@ -3262,6 +3263,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1837559390}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1955386298 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 554887416428163282, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
+  m_PrefabInstance: {fileID: 554887416522272843}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7803e63a68eccf247b20f325c6d18e71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2052998594
 GameObject:
   m_ObjectHideFlags: 0
