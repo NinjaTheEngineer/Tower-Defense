@@ -9,7 +9,8 @@ public class TowerPlacer : NinjaMonoBehaviour {
     public int towerPrice = 5;
     public EventSystem eventSystem;
     private Tower towerBlueprint;
-    public LayerMask placeableLayer;
+    public LayerMask placeableGroundLayer;
+    public LayerMask groundLayer;
     public System.Action OnTowerPlaced;
     public bool HasEnoughGoldForTower => ResourcesManager.Instance.CurrentGoldAmount >= towerPrice;
     public List<Tower> towersPlaced;
@@ -75,9 +76,18 @@ public class TowerPlacer : NinjaMonoBehaviour {
         Vector3 mousePosition = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
-        if(Physics.Raycast(ray, out hitInfo, float.MaxValue, placeableLayer)) {
-            logt(logId, "Ray="+ray+" HitInfo=" + hitInfo);
+        if(Physics.Raycast(ray, out hitInfo, float.MaxValue, placeableGroundLayer)) {
+            logd(logId, "Ray="+ray+" HitInfo="+hitInfo+" layer="+hitInfo.transform.gameObject.name+" => Placeable");
             towerBlueprint.transform.position = hitInfo.point;
+            if(!towerBlueprint.CanBePlaced) {
+                towerBlueprint.CanBePlaced = true;
+            }
+        } else if(Physics.Raycast(ray, out hitInfo, float.MaxValue, groundLayer)) {
+            logd(logId, "Ray="+ray+" HitInfo="+hitInfo+" layer="+hitInfo.transform.gameObject.name+" => Ground");
+            towerBlueprint.transform.position = hitInfo.point;
+            if(towerBlueprint.CanBePlaced) {
+                towerBlueprint.CanBePlaced = false;
+            }
         }
     }
 
@@ -87,12 +97,17 @@ public class TowerPlacer : NinjaMonoBehaviour {
             logw(logId, "TowerBlueprint is null => no-op");
             return;
         }
-        if(ResourcesManager.Instance.SpendGold(towerPrice)) {
+        if(towerBlueprint.CanBePlaced && ResourcesManager.Instance.SpendGold(towerPrice)) {
             logd(logId, "TowerBlueprint="+towerBlueprint+" => Place");
             //InvokeOnTowerPlaced();
-            towerBlueprint.Place();
-            towersPlaced.Add(towerBlueprint);
-            towerBlueprint = null;
+            bool placed = towerBlueprint.Place();
+            if(placed) {
+                logd(logId, "Placing tower="+towerBlueprint.logf());
+                towersPlaced.Add(towerBlueprint);
+                towerBlueprint = null;
+            } else {
+                logw(logId, "It wasn't possible to place tower="+towerBlueprint.logf());
+            }
         } else {
             logd(logId, "Not even gold for tower => no-op");
         }

@@ -13,6 +13,29 @@ public class Tower : NinjaMonoBehaviour {
     public GameObject placedVisu;
     public bool IsBeingPlaced => currentState==TowerState.BeingPlaced;
     public bool IsPlaced => currentState==TowerState.Placed;
+    private bool _canBePlaced;
+    public bool CanBePlaced {
+        get => _canBePlaced;
+        set {
+            string logId = "CanBePlaced_set";
+            if(_canBePlaced==value) {
+                logd(logId, "Tried to set CanBePlaced to same value of "+value);
+                return;
+            }
+            logd(logId, "Setting CanBePlaced from "+_canBePlaced+" to "+value);
+            _canBePlaced = value;
+            MeshRenderer renderer = blueprintVisu.GetComponent<MeshRenderer>();
+            Color c = renderer.material.color;
+            if(_canBePlaced) {
+                c = Color.white;
+            } else {
+                c = Color.red;
+            }
+            c.a = 0.5f;
+            renderer.material.color = c;
+        }
+    }
+
     public Transform shootingPoint;
     public Projectile projectilePrefab;
     public LayerMask enemyLayer;
@@ -85,11 +108,16 @@ public class Tower : NinjaMonoBehaviour {
             placedVisu.SetActive(true);    
         }
     }
-    public void Place() {
+    public bool Place() {
         string logId = "Place";
-        logd(logId, "Setting current tower state to Placed.");
+        if(!_canBePlaced) {
+            logd(logId, "Tried to place tower on unplacable position. => returning false");
+            return false;
+        }
+        logd(logId, "Setting current tower state to Placed. => returning true");
         currentState = TowerState.Placed;
         RefreshTowerVisu();
+        return true;
     }
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.green;
