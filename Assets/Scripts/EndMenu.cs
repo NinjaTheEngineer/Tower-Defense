@@ -5,6 +5,8 @@ using TMPro;
 
 public class EndMenu : Menu {
     public TextMeshProUGUI endText;
+    public string victoryText = "Victory!";
+    public string defeatText = "Defeat!";
     private void Start() {
         SetStartGameEventListeners();
         SetOnEndGameEventListeners();
@@ -25,12 +27,16 @@ public class EndMenu : Menu {
         GameManager.OnDefeat += SetDefeatUI;
     }
     private void SetVictoryUI() {
-        endText.text = "Victory!";
-        endText.color = Color.white;
+        string logId = "SetVictoryUI";
+        logd(logId, "Setting text to '"+victoryText+"' of color White => Opening Menu");
         Open();
+        endText.SetText(victoryText);
+        endText.color = Color.white;
     }
     private void SetDefeatUI() {
-        endText.text = "Defeat!";
+        string logId = "SetDefeatUI";
+        logd(logId, "Setting text to '"+defeatText+"' of color Red => Opening Menu");
+        endText.SetText(defeatText);
         endText.color = Color.red;
         Open();
     }

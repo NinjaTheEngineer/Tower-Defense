@@ -53,14 +53,6 @@ public class EnemySpawner : NinjaMonoBehaviour {
         for (int i = 0; i < totalWavesToSpawn; i++) {
             totalEnemiesToSpawn+=enemyWaves[i].amount;
         }
-        for (int i = 0; i < enemiesSpawned; i++) {
-            Enemy currentEnemy = enemies[i];
-            if(currentEnemy==null) {
-                logd(logId, "CurrentEnemy is null => continuing");
-                continue;
-            }
-            Destroy(currentEnemy);
-        }
         enemies = new List<Enemy>();
     }
 
@@ -68,7 +60,7 @@ public class EnemySpawner : NinjaMonoBehaviour {
     public bool SpawningEnemies {
         get => _spawningEnemies;
         private set {
-            string logId  = "SpawningEnemies_set";
+            string logId = "SpawningEnemies_set";
             if(value==_spawningEnemies) {
                 logd(logId, "Trying to set SpawningEnemies to same value of "+value+" => Returning");
                 return;
@@ -112,14 +104,14 @@ public class EnemySpawner : NinjaMonoBehaviour {
             if(enemiesSpawnedOnWave==waveEnemiesSpawnAmount) {
                 amountOfWavesLeft--;
                 enemiesSpawnedOnWave = 0;
-                if(amountOfWavesLeft<0) {
+                if(amountOfWavesLeft<=0) {
                     logd(logId, "There are no more waves to spawn. Victory!");
                     //OnAllEnemyWavesSpawned.Invoke(); 
                     SpawningEnemies = false;
                     yield break;
                 }
                 yield return new WaitForSeconds(currentEnemyWave.nextWaveDelay);
-                EnemyWave nextEnemyWave = enemyWaves[totalWavesToSpawn-amountOfWavesLeft-1];
+                EnemyWave nextEnemyWave = enemyWaves[totalWavesToSpawn-amountOfWavesLeft];
                 logd(logId, "Changing Wave from "+currentEnemyWave+" to "+nextEnemyWave+" while AmountOfWavesLeft="+amountOfWavesLeft);
                 currentEnemyWave = nextEnemyWave;
                 continue;
@@ -145,8 +137,11 @@ public class EnemySpawner : NinjaMonoBehaviour {
         lastSpawnTime = Time.realtimeSinceStartup;
     }
     private void OnEnemyDeath(Enemy enemy) {
+        string logId = "OnEnemyDeath";
         enemiesDead++;
+        logd(logId,"EnemiesDead="+enemiesDead+" TotalEnemiesToSpawn="+totalEnemiesToSpawn);
         if(enemiesDead>=totalEnemiesToSpawn) {
+            logd(logId," => GameWon");
             GameManager.Instance.GameWon();
         }
     }

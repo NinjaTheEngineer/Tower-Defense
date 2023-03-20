@@ -59,22 +59,22 @@ public class GameManager : NinjaMonoBehaviour {
     }
     public void GameWon() {
         string logId = "GameWon";
+        OnGameEnded();
         if(OnVictory==null) {
             logw(logId, "No listeneres registered for OnVictory event => no-op");
             return;
         }
         logd(logId, "Invoke OnVictory");
-        OnGameEnded();
         OnVictory.Invoke();
     }
     public void GameLost() {
         string logId = "EndGame";
+        OnGameEnded();
         if(OnDefeat==null) {
             logw(logId, "No listeneres registered for OnDefeat event => no-op");
             return;
         }
         logd(logId, "Invoke OnDefeat");
-        OnGameEnded();
         OnDefeat.Invoke(); 
     }
     private void OnGameEnded() {

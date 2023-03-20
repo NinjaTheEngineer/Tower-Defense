@@ -89,7 +89,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
         }
         if(ResourcesManager.Instance.SpendGold(towerPrice)) {
             logd(logId, "TowerBlueprint="+towerBlueprint+" => Place");
-            InvokeOnTowerPlaced();
+            //InvokeOnTowerPlaced();
             towerBlueprint.Place();
             towersPlaced.Add(towerBlueprint);
             towerBlueprint = null;

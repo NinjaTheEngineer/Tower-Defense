@@ -70,6 +70,7 @@ public class Enemy : Health {
             if(distanceToCore < distanceToDamageCore) {
                 logd(logId,"Distance to core is "+distanceToCore+" => Damaging core and destroying self.");
                 core.TakeDamage(damage);
+                OnDeath.Invoke(this);   
                 Destroy(gameObject);
             } else {
                 logt(logId,"Distance to core is "+distanceToCore+" => continuing");
@@ -96,7 +97,9 @@ public class Enemy : Health {
     }
     public override void DamageTaken() { }
     public override void Death() {
-        OnDeath.Invoke(this);
+        string logId = "Death";
+        logd(logId,"Invoking OnDeath");
+        OnDeath.Invoke(this);   
         Destroy(gameObject);
     }
     public void SetPath(Path path)  {
