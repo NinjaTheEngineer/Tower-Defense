@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Health : NinjaMonoBehaviour {
+public class Health : NinjaMonoBehaviour {
+    public System.Action OnDamageTaken;
     [SerializeField]
     private int maxHealth = 50;
     public int MaxHealth => maxHealth;
@@ -23,6 +24,12 @@ public abstract class Health : NinjaMonoBehaviour {
             _currentHealth = value;
         }
     }
+    public void TakeDamage(int damage) {
+        string logId = "TakeDamage";
+        logd(logId, "Taking "+damage+" => Invoking OnDamageTaken");
+        CurrentHealth -= damage;
+        OnDamageTaken.Invoke();
+    }
     private void Awake() {
         ResetHealth();
     }
@@ -31,18 +38,4 @@ public abstract class Health : NinjaMonoBehaviour {
         logd(logId,"Resetting Health to MaxHealth="+maxHealth);
         _currentHealth = maxHealth;
     }
-    
-    public virtual void TakeDamage(int damage) {
-        string logId = "TakeDamage";
-        logd(logId, "Taking damage of "+damage+" while CurrentHealth="+CurrentHealth);
-        CurrentHealth -= damage;
-        DamageTaken();
-        if(_currentHealth<=0) {
-            logd(logId, "CurrentHealth<=0 => OnDeath");
-            Death();
-        }
-    }
-    public abstract void DamageTaken();
-    public abstract void Death();
-
 }

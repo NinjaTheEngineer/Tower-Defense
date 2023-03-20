@@ -92,6 +92,7 @@ GameObject:
   - component: {fileID: 7268494418749720662}
   - component: {fileID: 7268494418749720665}
   - component: {fileID: 7485210740399022735}
+  - component: {fileID: 8032189427781019443}
   m_Layer: 7
   m_Name: Enemy_Yellow
   m_TagString: Untagged
@@ -127,11 +128,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c9f427c0154d41498b68048493ee1ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 35
   speed: 5
   waypointTargetDistance: 0.25
   distanceToDamageCore: 1
   damage: 10
+  _health: {fileID: 8032189427781019443}
   core: {fileID: 0}
 --- !u!65 &7485210740399022735
 BoxCollider:
@@ -146,6 +147,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8032189427781019443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7268494418749720664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b2c069771d3e94c96ce10e9e5d895d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 50
 --- !u!1001 &5269321307775257826
 PrefabInstance:
   m_ObjectHideFlags: 0

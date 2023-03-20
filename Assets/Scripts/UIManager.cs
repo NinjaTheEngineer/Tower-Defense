@@ -33,8 +33,8 @@ public class UIManager : NinjaMonoBehaviour {
     private void SetOnCoreHealthChangeEventListeners() {
         string logId = "SetOnCoreHealthChangeEventListeners";
         logd(logId, "Setting StartGameEvent Listeners");
-        Core.OnHealthAmountChange -= UpdateCoreHealthAmountText;
-        Core.OnHealthAmountChange += UpdateCoreHealthAmountText;
+        Core.OnHealthChange -= UpdateCoreHealthAmountText;
+        Core.OnHealthChange += UpdateCoreHealthAmountText;
     }
     private void ShowInGameUI() {
         string logId = "ShowInGameUI";

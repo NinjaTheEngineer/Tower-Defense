@@ -969,6 +969,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   endText: {fileID: 615440931}
+  victoryText: Victory!
+  defeatText: Defeat!
 --- !u!222 &443350177
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3510,9 +3512,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 887269148}
     m_Modifications:
     - target: {fileID: 554887416428163282, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
-      propertyPath: maxHealth
-      value: 150
-      objectReference: {fileID: 0}
+      propertyPath: _health
+      value: 
+      objectReference: {fileID: 554887416522272844}
     - target: {fileID: 554887416428163283, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -3561,9 +3563,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: Core
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 379630044862416230, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
+    - target: {fileID: 8100952567947332570, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
+      propertyPath: maxHealth
+      value: 150
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
+--- !u!114 &554887416522272844 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8100952567947332570, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
+  m_PrefabInstance: {fileID: 554887416522272843}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25b2c069771d3e94c96ce10e9e5d895d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1157408883870755466
 PrefabInstance:
   m_ObjectHideFlags: 0

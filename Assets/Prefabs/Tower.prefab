@@ -269,11 +269,14 @@ MonoBehaviour:
   currentState: 0
   blueprintVisu: {fileID: 3242372412782779208}
   placedVisu: {fileID: 5644243352384072715}
-  shootingRadius: 5
-  shootingDelay: 1
   shootingPoint: {fileID: 5590921216415229104}
   projectilePrefab: {fileID: 2858218657050053078, guid: b259971e70bc80d49b15d25fa2db0b36, type: 3}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+  shootingTarget: {fileID: 0}
   canShoot: 1
+  shootingDamage: 15
+  shootingSpeed: 10
+  shootingRadius: 5
+  shootingDelay: 1

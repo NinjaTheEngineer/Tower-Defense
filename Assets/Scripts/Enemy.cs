@@ -3,11 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Health {
+public class Enemy : NinjaMonoBehaviour {
     public float speed = 5f;
     public float waypointTargetDistance = 0.25f;
     public float distanceToDamageCore = 1f;
     public int damage;
+    [SerializeField]
+    private Health _health;
+    public Health Health {
+        get => _health; 
+        private set {
+            string logId = "Health_set";
+            if(_health==value) {
+                logd(logId, "Tried to set Health to same value of "+value.logf());
+                return;
+            }
+            logd(logId, "Setting Health from "+_health+" to "+value);
+            _health=value;
+        }
+    }
     private Path path;
     private Transform _currentWaypoint;
     public Core core;
@@ -34,29 +48,65 @@ public class Enemy : Health {
             logw(logId,"Path is null => no-op");
             return;
         }
+        if(!_health) {
+            _health = GetComponent<Health>();
+        }
+        Health.OnDamageTaken -= DamageTaken;
+        Health.OnDamageTaken += DamageTaken;
+
         core = path.Core;
         CurrentWaypoint = path.NextWaypoint();
+        StartCoroutine(SetWaypointRoutine());
         StartCoroutine(CoreAttackRoutine());
+    }
+    public void DamageTaken() { 
+        string logId = "DamageTaken";
+        int currentHealth = _health.CurrentHealth;
+        logd(logId, "Took damage CurrentHealth="+currentHealth);
+        if(currentHealth<=0) {
+            logd(logId, "Took damage CurrentHealth="+currentHealth+" => Death");
+            Death();
+        }
     }
     private void Update() {
         string logId = "Update";
         if(!GameManager.Instance.GameStarted) {
             return;
         }
-        if(CurrentWaypoint==null) {
-            if(path==null) {
-                return;
-            }
-            logd(logId, "CurrentWaypoint is null => Tried to set waypoint");
-            CurrentWaypoint = path.NextWaypoint();
-            core = path.Core;
-            return;
-        }
         HandleMovement();
-        float distanceToWaypoint = (CurrentWaypoint.position - transform.position).magnitude;
-        if(distanceToWaypoint <= waypointTargetDistance) {
-            CurrentWaypoint = path.NextWaypoint(CurrentWaypoint);
+    }
+    private IEnumerator SetWaypointRoutine() {
+        string logId = "SetWaypointRoutine";
+        WaitForSeconds waitForSeconds = new WaitForSeconds(0.1f);
+        while(gameObject.activeInHierarchy) {
+            bool gameStarted = GameManager.Instance.GameStarted;
+            if(!gameStarted) {
+                logd(logId, "GameStarted="+gameStarted+" => Continuing");
+                yield return waitForSeconds;
+                continue;
+            }
+            if(CurrentWaypoint==null) {
+                if(path==null) {
+                    logd(logId, "CurrentWaypoint="+CurrentWaypoint.logf()+" Path="+path.logf()+" => Continuing");
+                    yield return waitForSeconds;
+                    continue;
+                }
+                logd(logId, "CurrentWaypoint is null => Tried to set waypoint");
+                CurrentWaypoint = path.NextWaypoint();
+                core = path.Core;
+                logd(logId, "CurrentWaypoint="+CurrentWaypoint.logf()+" Path="+path.logf()+" Core="+core.logf()+" => Continuing");
+                yield return waitForSeconds;
+                continue;
+            }
+            float distanceToWaypoint = (CurrentWaypoint.position - transform.position).magnitude;
+            if(distanceToWaypoint <= waypointTargetDistance) {
+                logd(logId, "OurPosition="+transform.position+" CurrentWaypoint="+CurrentWaypoint.logf()+" DistanceToWaypoint="+distanceToWaypoint+" Path="+path.logf()+" Core="+core.logf()+" => Setting new Waypoint.");
+                CurrentWaypoint = path.NextWaypoint(CurrentWaypoint);
+            }
+            logt(logId, "OurPosition="+transform.position+" CurrentWaypoint="+CurrentWaypoint.logf()+" DistanceToWaypoint="+distanceToWaypoint+" Path="+path.logf()+" Core="+core.logf()+" => Continuing.");
+            yield return waitForSeconds;
         }
+        logd(logId, "Breaking routine.");
     }
     private IEnumerator CoreAttackRoutine() {
         string logId = "CoreAttackRoutine";
@@ -69,9 +119,8 @@ public class Enemy : Health {
             }
             if(distanceToCore < distanceToDamageCore) {
                 logd(logId,"Distance to core is "+distanceToCore+" => Damaging core and destroying self.");
-                core.TakeDamage(damage);
-                OnDeath.Invoke(this);   
-                Destroy(gameObject);
+                core.Health.TakeDamage(damage);
+                Death();
             } else {
                 logt(logId,"Distance to core is "+distanceToCore+" => continuing");
             }
@@ -79,6 +128,7 @@ public class Enemy : Health {
         }
         logd(logId,"Core is null => Breaking routine.");
     }
+    
     private float DistanceToCore {
         get {
             string logId = "DistanceToCore_get";
@@ -95,10 +145,9 @@ public class Enemy : Health {
         Vector3 direction = CurrentWaypoint.position - transform.position;
         transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
     }
-    public override void DamageTaken() { }
-    public override void Death() {
+    public void Death() {
         string logId = "Death";
-        logd(logId,"Invoking OnDeath");
+        logd(logId,"Invoking OnDeath => Destroying GameObject");
         OnDeath.Invoke(this);   
         Destroy(gameObject);
     }

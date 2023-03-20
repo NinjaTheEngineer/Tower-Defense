@@ -83,7 +83,7 @@ public class Projectile : NinjaMonoBehaviour {
                 logw(logId, "Target doesn't is NOT an Enemy!");
             } else {
                 logd(logId, "Target Enemy="+currentEnemy+" damaging with "+_damage);
-                currentEnemy.TakeDamage(_damage);
+                currentEnemy.Health.TakeDamage(_damage);
             }
             logd(logId, "Target hit distance="+distance+" => Destroying self");
             Destroy(gameObject);
