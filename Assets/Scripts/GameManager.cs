@@ -13,6 +13,8 @@ public class GameManager : NinjaMonoBehaviour {
     public bool GameStarted => currentState==GameState.Started;
     public static GameManager Instance;
     public static System.Action OnStartGame;
+    public static System.Action OnPauseGame;
+    public static System.Action OnResumeGame;
     public static System.Action OnVictory;
     public static System.Action OnDefeat;
     [SerializeField]
@@ -33,7 +35,6 @@ public class GameManager : NinjaMonoBehaviour {
         }
         currentState = GameState.None;
     }
-
     public void InitializeGame() {
         string logId = "InitializeGame";
         if(OnStartGame==null) {
@@ -56,6 +57,28 @@ public class GameManager : NinjaMonoBehaviour {
         logd(logId, "Invoke OnStartGame");
         OnStartGame.Invoke();
         currentState = GameState.Started;
+    }
+    public void ResumeGame() {
+        string logId = "ResumeGame";
+        Time.timeScale = 1f;
+        currentState = GameState.Started;
+        if(OnResumeGame==null) {
+            logw(logId, "No listeneres registered for OnResumeGame event => no-op");
+            return;
+        }
+        logd(logId, "Invoke OnResumeGame");
+        OnResumeGame.Invoke();
+    }
+    public void PauseGame() {
+        string logId = "PauseGame";
+        Time.timeScale = 0f;
+        currentState = GameState.Paused;
+        if(OnResumeGame==null) {
+            logw(logId, "No listeneres registered for OnResumeGame event => no-op");
+            return;
+        }
+        logd(logId, "Invoke OnResumeGame");
+        OnPauseGame.Invoke();
     }
     public void GameWon() {
         string logId = "GameWon";
@@ -85,9 +108,15 @@ public class GameManager : NinjaMonoBehaviour {
     }
     
     private void Update() {
-        //string logId = "Update";
-        if(currentState!=GameState.Started) {
+        if(currentState==GameState.Started) {
+            if(Input.GetKeyDown(KeyCode.Escape)) {
+                PauseGame();
+            }
             return;
+        } else if(currentState==GameState.Paused) {
+            if(Input.GetKeyDown(KeyCode.Escape)) {
+                ResumeGame();
+            }
         }
     }
 }
