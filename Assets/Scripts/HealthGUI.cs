@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class HealthGUI : NinjaMonoBehaviour {
     public Image healthAmountImage;
+    [SerializeField]
     private Health health;
     private float fillAmount;
     private void Start() {
@@ -34,6 +35,8 @@ public class HealthGUI : NinjaMonoBehaviour {
             healthAmountImage.fillAmount = fillAmount;
             yield return waitSeconds;
         }
+        logd(logId, "Health is null => Breaking routine!");
+
     }
     
 }

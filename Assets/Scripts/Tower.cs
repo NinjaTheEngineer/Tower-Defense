@@ -13,13 +13,16 @@ public class Tower : NinjaMonoBehaviour {
     public GameObject placedVisu;
     public bool IsBeingPlaced => currentState==TowerState.BeingPlaced;
     public bool IsPlaced => currentState==TowerState.Placed;
-    public float shootingRadius = 5f;
-    public float shootingDelay = 1f;
     public Transform shootingPoint;
     public Projectile projectilePrefab;
     public LayerMask enemyLayer;
     [SerializeField] private Transform shootingTarget;
+    [Header("Shooting")]
     public bool canShoot = true;
+    public int shootingDamage = 5;
+    public float shootingSpeed = 10;
+    public float shootingRadius = 5f;
+    public float shootingDelay = 1f;
     private void Awake() {
         currentState = TowerState.BeingPlaced;
     }
@@ -62,7 +65,7 @@ public class Tower : NinjaMonoBehaviour {
         logd(logId, "Starting Shoot routine");
         canShoot = false;
         Projectile projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity).GetComponent<Projectile>();
-        projectile.SetTarget(shootingTarget);
+        projectile.InitializeProjectile(shootingTarget, shootingDamage, shootingSpeed);
         yield return new WaitForSeconds(shootingDelay);
         logd(logId, "Setting canShoot to true");
         canShoot = true;

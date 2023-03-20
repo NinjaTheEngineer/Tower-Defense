@@ -3509,6 +3509,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 887269148}
     m_Modifications:
+    - target: {fileID: 554887416428163282, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
+      propertyPath: maxHealth
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 554887416428163283, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -3557,7 +3561,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Core
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 379630044862416230, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b7469f359a3f949458a071e9f37f050d, type: 3}
 --- !u!1001 &1157408883870755466
 PrefabInstance:

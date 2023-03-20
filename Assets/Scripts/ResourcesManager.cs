@@ -31,6 +31,10 @@ public class ResourcesManager : NinjaMonoBehaviour {
             Destroy(gameObject);
         }
     }
+    private void Start() {
+        GameManager.OnStartGame -= () => CurrentGoldAmount=0;
+        GameManager.OnStartGame += () => CurrentGoldAmount=0;
+    }
     private void Update() {
         if(GameManager.Instance.GameStarted) {
             if(CurrentGoldAmount < maxGoldAmount) {

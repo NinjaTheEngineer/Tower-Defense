@@ -3,18 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : NinjaMonoBehaviour {
-    public float speed = 10f;
-    public int damage = 10;
+    [SerializeField]
+    private int minDamage = 1;
+    [SerializeField]
+    private float minSpeed = 2f;
+    private int _damage;
+    public int Damage {
+        get => _damage;
+        private set {
+            string logId = "Damage_set";
+            if(_damage==value) {
+                logd(logId, "Tried to set Damage to same value of "+value+" => returning");
+                return;
+            }
+            if(value<=0) {
+                logd(logId,"Tried to set Damage to "+value+" => Setting to "+minDamage+" instead.");
+                value = minDamage;
+            }
+            logd(logId,"Setting Damage from "+_damage+" to "+value);
+            _damage = value;
+        }
+    }
+    private float _speed;
+    public float Speed {
+        get => _speed; 
+        private set {
+            string logId = "Speed_set";
+            if(_speed==value) {
+                logd(logId, "Tried to set Speed to same value of "+value+" => returning");
+                return;
+            }
+            if(value<=0) {
+                logd(logId,"Tried to set Speed to "+value+" => Setting to "+minSpeed+" instead.");
+                value = minSpeed;
+            }
+            logd(logId,"Setting Speed from "+_speed+" to "+value);
+            _speed = value;
+        }
+    }
     public float collisionCheckDelay = 0.1f;
     private float lastCollisionCheckTime;
     private Transform target;
+    public void InitializeProjectile(Transform target, int damage, float speed) {
+        string logId = "InitializeProjectile";
+        logd(logId, "Initializing Projectile with Damage="+damage+" Speed="+speed);
+        Damage = damage;
+        Speed = speed;
+        SetTarget(target);
+    }
     private void Update() {
         string logId = "Update";
         if(!GameManager.Instance.GameStarted) {
             return;
         }
-        if(target==null) {
-            logd(logId, "Target is null => Destroying self");
+        if(target==null || _damage==0 || _damage<minDamage) {
+            logd(logId, "Target="+target.logf()+" Damage="+_damage+" MinDamage="+minDamage+" => Destroying self");
             Destroy(gameObject);
             return;
         }
@@ -29,7 +72,7 @@ public class Projectile : NinjaMonoBehaviour {
     }
     private void HandleMovement() {
         Vector3 direction = target.position - transform.position;
-        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * _speed * Time.deltaTime, Space.World);
     }
     private void HandleEnemyCollision() {
         string logId = "HandleEnemyCollision";
@@ -39,7 +82,8 @@ public class Projectile : NinjaMonoBehaviour {
             if(currentEnemy==null) {
                 logw(logId, "Target doesn't is NOT an Enemy!");
             } else {
-                currentEnemy.TakeDamage(damage);
+                logd(logId, "Target Enemy="+currentEnemy+" damaging with "+_damage);
+                currentEnemy.TakeDamage(_damage);
             }
             logd(logId, "Target hit distance="+distance+" => Destroying self");
             Destroy(gameObject);

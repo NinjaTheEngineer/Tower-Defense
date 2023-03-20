@@ -107,7 +107,7 @@ public class EnemySpawner : NinjaMonoBehaviour {
                 Enemy currentEnemy = currentEnemyWave.enemy;
                 logd(logId, "Spawning Enemy="+currentEnemy+" Number="+enemiesSpawnedOnWave+" for Wave="+amountOfWavesLeft);
                 SpawnEnemy(currentEnemy);
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(currentEnemyWave.spawnDelay);
             }
             if(enemiesSpawnedOnWave==waveEnemiesSpawnAmount) {
                 amountOfWavesLeft--;
@@ -118,7 +118,7 @@ public class EnemySpawner : NinjaMonoBehaviour {
                     SpawningEnemies = false;
                     yield break;
                 }
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(currentEnemyWave.nextWaveDelay);
                 EnemyWave nextEnemyWave = enemyWaves[totalWavesToSpawn-amountOfWavesLeft-1];
                 logd(logId, "Changing Wave from "+currentEnemyWave+" to "+nextEnemyWave+" while AmountOfWavesLeft="+amountOfWavesLeft);
                 currentEnemyWave = nextEnemyWave;

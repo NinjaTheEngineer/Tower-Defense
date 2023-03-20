@@ -98,7 +98,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
         }
     }
     private void InvokeOnTowerPlaced() {
-        string logId = "InvokeOnGoldUpdated";
+        string logId = "InvokeOnTowerPlaced";
         if(OnTowerPlaced==null) {
             logw(logId, "No listeneres registered for OnTowerPlaced event => no-op");
             return;

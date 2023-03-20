@@ -3,13 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : NinjaMonoBehaviour {
+public class Enemy : Health {
     public float speed = 5f;
     public float waypointTargetDistance = 0.25f;
     public float distanceToDamageCore = 1f;
     public int damage;
-    [SerializeField]
-    private Health health;
     private Path path;
     private Transform _currentWaypoint;
     public Core core;
@@ -29,9 +27,6 @@ public class Enemy : NinjaMonoBehaviour {
             logt(logId, "Setting CurrentWaypoint from " + _currentWaypoint?.name.logf() + " to " + value?.name.logf());
             _currentWaypoint = value;
         }
-    }
-    private void Awake() {
-        health = health??GetComponent<Health>();
     }
     private void Start() {
         string logId = "Start";
@@ -99,22 +94,11 @@ public class Enemy : NinjaMonoBehaviour {
         Vector3 direction = CurrentWaypoint.position - transform.position;
         transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
     }
-    public void TakeDamage(int damage) {
-        string logId = "TakeDamage";
-        if(health==null) {
-            logd(logId, "Health component is missing => no-op");
-            return;
-        }
-        logd(logId, "Taking damage of "+damage);
-        health.CurrentHealth -= damage;
-        int currentHealth = health.CurrentHealth;
-        if(currentHealth<=0) {
-            logd(logId, "Enemy is dead => Destroying self");
-            OnDeath.Invoke(this);
-            Destroy(gameObject);
-        }
+    public override void DamageTaken() { }
+    public override void Death() {
+        OnDeath.Invoke(this);
+        Destroy(gameObject);
     }
-
     public void SetPath(Path path)  {
         string logId = "SetPath";
         if(path==null) {
