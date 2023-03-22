@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Health))]
 public class Enemy : NinjaMonoBehaviour {
     public float speed = 5f;
     public float waypointTargetDistance = 0.25f;
