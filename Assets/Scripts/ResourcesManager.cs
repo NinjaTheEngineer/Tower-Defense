@@ -19,7 +19,7 @@ public class ResourcesManager : NinjaMonoBehaviour {
             InvokeOnGoldUpdated();
         }
     } 
-    public static System.Action OnGoldUpdated;
+    public static System.Action<int> OnGoldUpdated;
     public static ResourcesManager Instance;
     private void Awake() {
         string logId = "Awake";
@@ -32,12 +32,12 @@ public class ResourcesManager : NinjaMonoBehaviour {
         }
     }
     private void Start() {
-        GameManager.OnStartGame -= () => CurrentGoldAmount=0;
-        GameManager.OnStartGame += () => CurrentGoldAmount=0;
+        GameManager.OnStartGame -= () => _currentGoldAmount=0;
+        GameManager.OnStartGame += () => _currentGoldAmount=0;
     }
     private void Update() {
         if(GameManager.Instance.GameStarted) {
-            if(CurrentGoldAmount < maxGoldAmount) {
+            if(_currentGoldAmount < maxGoldAmount) {
                 HandleGoldGeneration();
             }
         }
@@ -51,6 +51,7 @@ public class ResourcesManager : NinjaMonoBehaviour {
         CurrentGoldAmount-= goldToSpend;
         return true;
     }
+    public bool HasAmountOfGold(int goldAmount) => _currentGoldAmount >= goldAmount;
     private void HandleGoldGeneration() {
         string logId = "HandleGoldGeneration";
         float timeSinceGoldEarned = Time.realtimeSinceStartup-lastGoldEarnTime; 
@@ -68,6 +69,6 @@ public class ResourcesManager : NinjaMonoBehaviour {
             logw(logId, "No listeneres registered for OnGameStart event => no-op");
             return;
         }
-        OnGoldUpdated.Invoke();
+        OnGoldUpdated.Invoke(_currentGoldAmount);
     }
 }

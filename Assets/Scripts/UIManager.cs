@@ -72,15 +72,18 @@ public class UIManager : NinjaMonoBehaviour {
             coreHealthUI.SetActive(false);
         }
     }
-    private void UpdateGoldAmountText() {
+    private void UpdateGoldAmountText(int goldAmount = -1) {
         string logId = "UpdateGoldAmountText";
         if(goldAmountText==null) {
             loge(logId,"GoldAmounText is null => no-op");
             return;
         }
-        int amountOfGold = ResourcesManager.Instance.CurrentGoldAmount;
-        logt(logId,"Setting GoldAmountText to " + amountOfGold);
-        goldAmountText.text = amountOfGold.ToString();
+        if(goldAmount<=0) {
+            logd(logId, "GoldAmount="+goldAmount+" => Fetching from ResourceManager");
+            goldAmount = ResourcesManager.Instance.CurrentGoldAmount;
+        }
+        logt(logId,"Setting GoldAmountText to " + goldAmount);
+        goldAmountText.text = goldAmount.ToString();
     }
     private void UpdateCoreHealthAmountText(int healthAmount) {
         string logId = "UpdateCoreHealthAmountText";

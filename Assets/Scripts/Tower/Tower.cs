@@ -13,44 +13,61 @@ public class Tower : NinjaMonoBehaviour {
     public GameObject placedVisu;
     public bool IsBeingPlaced => currentState==TowerState.BeingPlaced;
     public bool IsPlaced => currentState==TowerState.Placed;
-    private bool _canBePlaced;
-    public bool CanBePlaced {
-        get => _canBePlaced;
-        set {
-            string logId = "CanBePlaced_set";
-            if(_canBePlaced==value) {
-                logd(logId, "Tried to set CanBePlaced to same value of "+value);
-                return;
-            }
-            logd(logId, "Setting CanBePlaced from "+_canBePlaced+" to "+value);
-            _canBePlaced = value;
-            MeshRenderer renderer = blueprintVisu.GetComponent<MeshRenderer>();
-            Color c = renderer.material.color;
-            if(_canBePlaced) {
-                c = Color.white;
-            } else {
-                c = Color.red;
-            }
-            c.a = 0.5f;
-            renderer.material.color = c;
-        }
-    }
-
     public Transform shootingPoint;
     public Projectile projectilePrefab;
     public LayerMask enemyLayer;
-    [SerializeField] private Transform shootingTarget;
     [Header("Shooting")]
     public bool canShoot = true;
     public int shootingDamage = 5;
     public float shootingSpeed = 10;
     public float shootingRadius = 5f;
     public float shootingDelay = 1f;
+    public CircularIndicator attackRangeIndicator;
+    [SerializeField] private Transform shootingTarget;
+    private Renderer[] _renderers;
+    public Renderer[] Renderers {
+        get {
+            if(IsBeingPlaced) {
+                _renderers = blueprintVisu.GetComponentsInChildren<Renderer>();
+            } else {
+                _renderers = placedVisu.GetComponentsInChildren<Renderer>();
+            }
+            return _renderers;
+        }
+    }
+    private bool _canBePlaced;
+    public bool CanBePlaced {
+        get => _canBePlaced;
+        set {
+            string logId = "CanBePlaced_set";
+            if(_canBePlaced==value) {
+                logt(logId, "Tried to set CanBePlaced to same value of "+value);
+                return;
+            }
+            logd(logId, "Setting CanBePlaced from "+_canBePlaced+" to "+value);
+            _canBePlaced = value;
+            //MeshRenderer renderer = blueprintVisu.GetComponent<MeshRenderer>();
+            Renderer[] renderers = Renderers;
+            int renderersCount = renderers.Length;
+            if(renderersCount==0) {
+                logw(logId, "RenderersCount="+renderersCount+" Renderers="+renderers.logf()+" => returning");
+                return;
+            }
+            
+        }
+    }
     private void Awake() {
         currentState = TowerState.BeingPlaced;
     }
     private void Start() {
         RefreshTowerVisu();
+        CanBePlaced = true;
+        StartIndicators();
+    }
+    private void StartIndicators() {
+        attackRangeIndicator.Activate();
+        attackRangeIndicator.SetSize(shootingRadius);
+        attackRangeIndicator.FollowTarget = transform;
     }
     private void Update() {
         if(GameManager.Instance.GameStarted && IsPlaced) {
@@ -61,6 +78,8 @@ public class Tower : NinjaMonoBehaviour {
                 
             }
         }
+        attackRangeIndicator.SetSize(shootingRadius);
+        attackRangeIndicator.FollowTarget = attackRangeIndicator.transform;
     }
     private Transform FindClosestEnemy() {
         string logId = "FindClosestEnemy";
@@ -93,7 +112,6 @@ public class Tower : NinjaMonoBehaviour {
         logd(logId, "Setting canShoot to true");
         canShoot = true;
     }
-
     private void RefreshTowerVisu() {
         string logId = "RefreshTowerVisu";
         bool visuActive = placedVisu.activeInHierarchy;
