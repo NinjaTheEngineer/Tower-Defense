@@ -24,6 +24,7 @@ public class Tower : NinjaMonoBehaviour {
     public float shootingDelay = 1f;
     public CircularIndicator attackRangeIndicator;
     [SerializeField] private Transform shootingTarget;
+    [SerializeField] private Transform turretHolder;
     private Renderer[] _renderers;
     public Renderer[] Renderers {
         get {
@@ -73,7 +74,8 @@ public class Tower : NinjaMonoBehaviour {
         if(GameManager.Instance.GameStarted && IsPlaced) {
             shootingTarget = FindClosestEnemy();
             if(shootingTarget!=null && canShoot) {
-                StartCoroutine(Shoot());
+                StartCoroutine(ShootRoutine());
+                StartCoroutine(AlignTurretRoutine());
             } else {
                 
             }
@@ -101,9 +103,18 @@ public class Tower : NinjaMonoBehaviour {
         }
         return closestEnemy;
     }
-
-    private IEnumerator Shoot() {
-        string logId = "Shoot";
+    private IEnumerator AlignTurretRoutine() {
+        string logId = "AlignTurretRoutine";
+        logd(logId, "Starting routine while ShootingTarget="+shootingTarget.logf()+" TurretHolder="+turretHolder.logf());
+        WaitForSeconds waitForSeconds = new WaitForSeconds(0.075f);
+        while(shootingTarget && turretHolder) {
+            turretHolder.LookAt(shootingTarget);
+            yield return waitForSeconds;
+        }
+        logd(logId, "Breaking routine while ShootingTarget="+shootingTarget.logf()+" TurretHolder="+turretHolder.logf());
+    }
+    private IEnumerator ShootRoutine() {
+        string logId = "ShootRoutine";
         logd(logId, "Starting Shoot routine");
         canShoot = false;
         Projectile projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity).GetComponent<Projectile>();
