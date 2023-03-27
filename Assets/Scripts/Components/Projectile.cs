@@ -72,6 +72,7 @@ public class Projectile : NinjaMonoBehaviour {
     }
     private void HandleMovement() {
         Vector3 direction = target.position - transform.position;
+        transform.rotation = Quaternion.LookRotation(direction);
         transform.Translate(direction.normalized * _speed * Time.deltaTime, Space.World);
     }
     private void HandleEnemyCollision() {

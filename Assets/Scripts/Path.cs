@@ -38,6 +38,7 @@ public class Path : NinjaMonoBehaviour {
     }
     private void Start() {
         FetchWaypoints();
+        DeactivateWaypoints();
     }
 
     private void FetchWaypoints() {
@@ -50,6 +51,18 @@ public class Path : NinjaMonoBehaviour {
         }
         for (int i = 1; i < foundTransformsCount; i++) {
             waypoints.Add(foundTransforms[i]);
+        }
+    }
+    private void DeactivateWaypoints() {
+        string logId = "DeactivateWaypoints";
+        int waypointsCount = waypoints.Count;
+        if(waypointsCount==0) {
+            logw(logId, "WaypointsCount="+waypointsCount+" => no-op");
+            return;
+        }
+        for (int i = 0; i < waypointsCount; i++) {
+            var currentWaypoint = waypoints[i];
+            currentWaypoint.gameObject.SetActive(false);
         }
     }
     public Transform NextWaypoint(Transform currentWaypoint=null) {
@@ -65,8 +78,14 @@ public class Path : NinjaMonoBehaviour {
         }
         int currentIndex = waypoints.IndexOf(currentWaypoint);
         if(currentIndex==waypointsCount-1) {
-            logw(logId, "Current index is the last index => returning null");
-            return currentWaypoint;
+            bool isCore = currentWaypoint==_core.transform;
+            if(isCore) {
+                logw(logId, "Current index is the last index. IsCore="+isCore+" => returning same Waypoint");
+                return currentWaypoint;
+            } else {
+                logd(logId, "Current index is the last index. IsCore="+isCore+" => returning Core");
+                return _core.transform;
+            }
         }
         Transform nextWaypoint = waypoints[currentIndex+1];
         logt(logId, "CurrentIndex="+currentIndex+ " returning NextWaypoint="+nextWaypoint);

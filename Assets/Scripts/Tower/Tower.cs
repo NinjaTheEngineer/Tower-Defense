@@ -13,7 +13,6 @@ public class Tower : NinjaMonoBehaviour {
     public GameObject placedVisu;
     public bool IsBeingPlaced => currentState==TowerState.BeingPlaced;
     public bool IsPlaced => currentState==TowerState.Placed;
-    public Transform shootingPoint;
     public Projectile projectilePrefab;
     public LayerMask enemyLayer;
     [Header("Shooting")]
@@ -22,6 +21,8 @@ public class Tower : NinjaMonoBehaviour {
     public float shootingSpeed = 10;
     public float shootingRadius = 5f;
     public float shootingDelay = 1f;
+    public Transform shootingPoint;
+    public ParticleSystem shootingFX;
     public CircularIndicator attackRangeIndicator;
     [SerializeField] private Transform shootingTarget;
     [SerializeField] private Transform turretHolder;
@@ -119,6 +120,7 @@ public class Tower : NinjaMonoBehaviour {
         canShoot = false;
         Projectile projectile = Instantiate(projectilePrefab, shootingPoint.position, Quaternion.identity).GetComponent<Projectile>();
         projectile.InitializeProjectile(shootingTarget, shootingDamage, shootingSpeed);
+        Instantiate(shootingFX, shootingPoint.position, turretHolder.rotation);
         yield return new WaitForSeconds(shootingDelay);
         logd(logId, "Setting canShoot to true");
         canShoot = true;

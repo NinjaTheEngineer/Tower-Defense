@@ -36,7 +36,5 @@ public class HealthGUI : NinjaMonoBehaviour {
             yield return waitSeconds;
         }
         logd(logId, "Health is null => Breaking routine!");
-
     }
-    
 }

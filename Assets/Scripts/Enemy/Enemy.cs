@@ -144,6 +144,7 @@ public class Enemy : NinjaMonoBehaviour {
     }
     private void HandleMovement() {
         Vector3 direction = CurrentWaypoint.position - transform.position;
+        transform.rotation = Quaternion.LookRotation(direction);
         transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
     }
     public void Death() {

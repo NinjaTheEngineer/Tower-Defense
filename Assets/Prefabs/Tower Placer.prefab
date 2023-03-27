@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5236862547830961158}
   m_Father: {fileID: 0}
@@ -44,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af72e100df7f9bc41ace2ded4ce31e07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  towerGO: {fileID: 2917901245774282463, guid: ffba10ae88bf45542ae5275adc5a3f69, type: 3}
+  towerGO: {fileID: 2917901245774282463, guid: ce3a8e61ae1e60247985b3c2a9496d19, type: 3}
   towerPrice: 5
   nearTowerDistance: 3
   eventSystem: {fileID: 0}
@@ -125,11 +126,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7347643f6bbe8a478bf720119500739, type: 3}
---- !u!4 &5236862547830961158 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1849221739674027347, guid: a7347643f6bbe8a478bf720119500739, type: 3}
-  m_PrefabInstance: {fileID: 5838023986024395093}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3003603548630104955 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8694799834206603822, guid: a7347643f6bbe8a478bf720119500739, type: 3}
@@ -141,3 +137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03e0b9f2acff7854aa9e4dae16c574b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &5236862547830961158 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1849221739674027347, guid: a7347643f6bbe8a478bf720119500739, type: 3}
+  m_PrefabInstance: {fileID: 5838023986024395093}
+  m_PrefabAsset: {fileID: 0}
