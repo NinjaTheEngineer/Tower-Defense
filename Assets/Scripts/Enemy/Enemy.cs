@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Health))]
 public class Enemy : NinjaMonoBehaviour {
-    public float speed = 5f;
+    [FormerlySerializedAs("speed")]
+    public float movementSpeed = 5f;
     public float waypointTargetDistance = 0.25f;
     public float distanceToDamageCore = 1f;
+    
     public int damage;
     [SerializeField]
     private Health _health;
@@ -22,6 +25,10 @@ public class Enemy : NinjaMonoBehaviour {
             logd(logId, "Setting Health from "+_health+" to "+value);
             _health=value;
         }
+    }
+    public float DistanceTravelled {
+        get;
+        private set;
     }
     private Path path;
     private Transform _currentWaypoint;
@@ -45,6 +52,7 @@ public class Enemy : NinjaMonoBehaviour {
     }
     private void Start() {
         string logId = "Start";
+        DistanceTravelled = 0;
         if(path==null) {
             logw(logId,"Path is null => no-op");
             return;
@@ -145,7 +153,8 @@ public class Enemy : NinjaMonoBehaviour {
     private void HandleMovement() {
         Vector3 direction = CurrentWaypoint.position - transform.position;
         transform.rotation = Quaternion.LookRotation(direction);
-        transform.Translate(direction.normalized * speed * Time.deltaTime, Space.World);
+        transform.Translate(direction.normalized * movementSpeed * Time.deltaTime, Space.World);
+        DistanceTravelled += movementSpeed * Time.deltaTime;
     }
     public void Death() {
         string logId = "Death";

@@ -92,7 +92,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
         string logId = "CheckTowersNearbyRoutine";
         WaitForSeconds waitForSeconds = new WaitForSeconds(0.1f);
         int placedTowersCount = placedTowers.Count;
-        while(towerBlueprint && towerBlueprint.IsBeingPlaced) {
+        while(placedTowersCount>0 && towerBlueprint && towerBlueprint.IsBeingPlaced) {
             nearAnyTower = false;
             if(placedTowersCount==0) {
                 yield break;
@@ -106,7 +106,7 @@ public class TowerPlacer : NinjaMonoBehaviour {
                 }
                 float distanceToTower = (currentPlacedTower.transform.position - towerBlueprint.transform.position).magnitude;
                 if(nearTowerDistance > distanceToTower) {
-                    logw(logId, "CurrentPlacedTower="+currentPlacedTower.logf()+" TowerBlueprint="+towerBlueprint.logf()+" Distance="+distanceToTower+" => Continuing");
+                    logd(logId, "CurrentPlacedTower="+currentPlacedTower.logf()+" TowerBlueprint="+towerBlueprint.logf()+" Distance="+distanceToTower+" => Continuing");
                     nearAnyTower = true;
                     break;
                 }

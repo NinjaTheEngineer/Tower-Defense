@@ -4,11 +4,17 @@ using UnityEngine;
 
 [SelectionBase]
 public class Tower : NinjaMonoBehaviour {
-    public TowerState currentState;
     public enum TowerState {
         BeingPlaced,
         Placed
     }
+    public enum TargetMode {
+        ClosestEnemy,
+        FurthestEnemy
+    }
+    private Dictionary<TargetMode, EnemyComparison> comparisonDelegates;
+    public TowerState currentState;
+    public TargetMode targetMode;
     public GameObject blueprintVisu;
     public GameObject placedVisu;
     public bool IsBeingPlaced => currentState==TowerState.BeingPlaced;
@@ -60,6 +66,10 @@ public class Tower : NinjaMonoBehaviour {
     }
     private void Awake() {
         currentState = TowerState.BeingPlaced;
+        comparisonDelegates = new Dictionary<TargetMode, EnemyComparison> {
+            {TargetMode.ClosestEnemy, GetDistanceFromEnemy},
+            {TargetMode.FurthestEnemy, GetEnemyDistanceTravelled}
+        };
     }
     private void Start() {
         RefreshTowerVisu();
@@ -73,7 +83,7 @@ public class Tower : NinjaMonoBehaviour {
     }
     private void Update() {
         if(GameManager.Instance.GameStarted && IsPlaced) {
-            shootingTarget = FindClosestEnemy();
+            shootingTarget = FindEnemyByComparison();
             if(shootingTarget!=null && canShoot) {
                 StartCoroutine(ShootRoutine());
                 StartCoroutine(AlignTurretRoutine());
@@ -84,25 +94,51 @@ public class Tower : NinjaMonoBehaviour {
         attackRangeIndicator.SetSize(shootingRadius);
         attackRangeIndicator.FollowTarget = attackRangeIndicator.transform;
     }
-    private Transform FindClosestEnemy() {
-        string logId = "FindClosestEnemy";
+    delegate float EnemyComparison(Enemy enemy);
+    private Transform FindEnemyByComparison() {
+        string logId = "FindEnemyByComparison";
+        EnemyComparison enemyComparisonType = comparisonDelegates[targetMode];
         Collider[] colliders = Physics.OverlapSphere(transform.position, shootingRadius, enemyLayer);
-        float minDistance = -1;
-        Transform closestEnemy = null;
+        float bestValue = -1;
+        Transform selectedEnemy = null;
         int collidersCount = colliders.Length;
         if(collidersCount==0) {
             logt(logId, "Nothing found => returning null");
-            return closestEnemy;
+            return selectedEnemy;
         }
         for (int i = 0; i < collidersCount; i++) {
-            Collider currentCollider = colliders[i];
-            float distance = Vector3.Distance(transform.position, currentCollider.transform.position);
-            if(minDistance==-1 || distance < minDistance) {
-                minDistance = distance;
-                closestEnemy = currentCollider.transform;
+            Enemy currentEnemy = colliders[i].GetComponent<Enemy>();
+            if(currentEnemy==null) {
+                logw(logId, "CurrentEnemy="+currentEnemy.logf()+" => continuing.");
+                continue;
+            }
+            float currentValue = enemyComparisonType(currentEnemy);
+            if(bestValue==-1 || currentValue > bestValue) { 
+                bestValue = currentValue;
+                selectedEnemy = currentEnemy.transform;
             }
         }
-        return closestEnemy;
+        return selectedEnemy;
+    }
+    private float GetDistanceFromEnemy(Enemy enemy) {
+        string logId = "FindFurthestEnemy";
+        if(enemy==null) {
+            logw(logId, "CurrentEnemy="+enemy.logf()+" => continuing.");
+            return -1f;
+        }
+        float distance = -Vector3.Distance(transform.position, enemy.transform.position);
+        logd(logId, "CurrentEnemy="+enemy.logf()+" => continuing.");
+        return distance;
+    }
+    private float GetEnemyDistanceTravelled(Enemy enemy) {
+        string logId = "FindFurthestEnemy";
+        if(enemy==null) {
+            logw(logId, "CurrentEnemy="+enemy.logf()+" => continuing.");
+            return -1f;
+        }
+        float distanceTravelled = enemy.DistanceTravelled;
+        logd(logId, "CurrentEnemy="+enemy.logf()+" => continuing.");
+        return distanceTravelled;
     }
     private IEnumerator AlignTurretRoutine() {
         string logId = "AlignTurretRoutine";
