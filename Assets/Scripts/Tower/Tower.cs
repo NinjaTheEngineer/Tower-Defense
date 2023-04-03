@@ -91,7 +91,6 @@ public class Tower : NinjaMonoBehaviour {
                 
             }
         }
-        attackRangeIndicator.SetSize(shootingRadius);
         attackRangeIndicator.FollowTarget = attackRangeIndicator.transform;
     }
     delegate float EnemyComparison(Enemy enemy);
@@ -127,7 +126,7 @@ public class Tower : NinjaMonoBehaviour {
             return -1f;
         }
         float distance = -Vector3.Distance(transform.position, enemy.transform.position);
-        logd(logId, "CurrentEnemy="+enemy.logf()+" => continuing.");
+        logd(logId, "CurrentEnemy="+enemy.logf()+" => continuing.", true);
         return distance;
     }
     private float GetEnemyDistanceTravelled(Enemy enemy) {
@@ -137,7 +136,7 @@ public class Tower : NinjaMonoBehaviour {
             return -1f;
         }
         float distanceTravelled = enemy.DistanceTravelled;
-        logd(logId, "CurrentEnemy="+enemy.logf()+" => continuing.");
+        logd(logId, "CurrentEnemy="+enemy.logf()+" => continuing.", true);
         return distanceTravelled;
     }
     private IEnumerator AlignTurretRoutine() {

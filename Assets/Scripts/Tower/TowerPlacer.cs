@@ -129,13 +129,13 @@ public class TowerPlacer : NinjaMonoBehaviour {
         if(canPlaceTower && Physics.Raycast(ray, out hitInfo, float.MaxValue, placeableGroundLayer)) {
             towerBlueprint.transform.position = hitInfo.point;
             if(!towerBlueprint.CanBePlaced) {
-                logd(logId, "Tower="+towerBlueprint+" NearAnyTower="+nearAnyTower+"HasEnoughGoldForTower="+hasEnoughGoldForTower+" Ray="+ray.logf()+" HitInfo="+hitInfo.logf()+" => Can be Placed");
+                logd(logId, "Tower="+towerBlueprint+" NearAnyTower="+nearAnyTower+"HasEnoughGoldForTower="+hasEnoughGoldForTower+" Ray="+ray.logf()+" HitInfo="+hitInfo.logf()+" => Can be Placed", true);
                 towerBlueprint.CanBePlaced = true;
                 placementIndicator.SetPrimaryColor();
             }
         } else if(Physics.Raycast(ray, out hitInfo, float.MaxValue, groundLayer) || !canPlaceTower) {
             towerBlueprint.transform.position = hitInfo.point;
-            logd(logId, "Tower="+towerBlueprint+" NearAnyTower="+nearAnyTower+" HasEnoughGoldForTower="+hasEnoughGoldForTower+" Ray="+ray.logf()+" HitInfo="+hitInfo.logf()+" => Cannot be Placed.");
+            logd(logId, "Tower="+towerBlueprint+" NearAnyTower="+nearAnyTower+" HasEnoughGoldForTower="+hasEnoughGoldForTower+" Ray="+ray.logf()+" HitInfo="+hitInfo.logf()+" => Cannot be Placed.", true);
             towerBlueprint.CanBePlaced = false;
             placementIndicator.SetSecondaryColor();
         }

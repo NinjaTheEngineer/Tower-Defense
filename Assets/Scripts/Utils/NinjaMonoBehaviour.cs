@@ -3,17 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NinjaMonoBehaviour : MonoBehaviour {
-
-    public void logd(string id, string message) {
+    Dictionary<string, string> lastIdMessage = new Dictionary<string, string>();
+    public void logd(string id, string message, bool ignoreDuplicates=false) {
+        if(ignoreDuplicates && lastIdMessage.ContainsKey(id) && lastIdMessage[id]==message) {
+            return;
+        }
         Debug.Log(name + "::" + id + "->" + message);
+        if(lastIdMessage.ContainsKey(id)) {
+            lastIdMessage[id] = message;
+        } else {
+            lastIdMessage.Add(id, message);
+        }
     }
     
-    public void logw(string id, string message) {
+    public void logw(string id, string message, bool ignoreDuplicates=false) {
+        if(ignoreDuplicates && lastIdMessage.ContainsKey(id) && lastIdMessage[id]==message) {
+            return;
+        }
         Debug.LogWarning(name + "::" + id + "->" + message);
+        if(lastIdMessage.ContainsKey(id)) {
+            lastIdMessage[id] = message;
+        } else {
+            lastIdMessage.Add(id, message);
+        }
     }
     
-    public void loge(string id=null, string message=null) {
+    public void loge(string id=null, string message=null, bool ignoreDuplicates=false) {
+        if(ignoreDuplicates && lastIdMessage.ContainsKey(id) && lastIdMessage[id]==message) {
+            return;
+        }
         Debug.LogError(name + "::" + id + "->" + message);
+        if(lastIdMessage.ContainsKey(id)) {
+            lastIdMessage[id] = message;
+        } else {
+            lastIdMessage.Add(id, message);
+        }
 
     }
     public void logt(string id=null, string message=null) {
