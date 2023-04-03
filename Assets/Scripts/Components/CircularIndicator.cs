@@ -11,6 +11,11 @@ public class CircularIndicator : NinjaMonoBehaviour {
     private Color secondaryColor;
     private Transform _followTarget;
     private Vector3 _originalScale;
+    private IndicatorState indicatorState;
+    public enum IndicatorState {
+        Inactive,
+        Active
+    }
     public Vector3 OriginalScale {
         get => _originalScale;
         private set {
@@ -41,12 +46,14 @@ public class CircularIndicator : NinjaMonoBehaviour {
     }
     public void Activate() {
         string logId = "Activate";
+        indicatorState = IndicatorState.Active;
         gameObject.SetActive(true);
         logd(logId, "Activating "+name);
         SetPrimaryColor();
     }
     public void Deactivate() {
         string logId = "Deactivate";
+        indicatorState = IndicatorState.Inactive;
         FollowTarget = null;
         logd(logId, "Deactivating "+name);
         gameObject.SetActive(false);    
@@ -70,8 +77,10 @@ public class CircularIndicator : NinjaMonoBehaviour {
         transform.localScale = newScale;
     }
     private void Update() {
-        if(_followTarget) {
+        if(indicatorState==IndicatorState.Active && _followTarget) {
             transform.position = _followTarget.transform.position;
+        } else if(indicatorState==IndicatorState.Active && !_followTarget) {
+            Deactivate();
         }
     }
 }

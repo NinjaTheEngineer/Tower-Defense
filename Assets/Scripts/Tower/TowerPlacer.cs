@@ -68,17 +68,22 @@ public class TowerPlacer : NinjaMonoBehaviour {
             HandleTowerBlueprintPosition();
         }
         if(Input.GetMouseButtonDown(0) && towerBlueprint!=null) {
-            logd(logId, "Mouse 0 down TowerBlueprint="+towerBlueprint.logf()+"=> PlaceTower");
+            logd(logId, "Mouse 0 down TowerBlueprint="+towerBlueprint.logf()+" => PlaceTower");
             PlaceTower();
+        }
+        if(Input.GetMouseButtonDown(1) && towerBlueprint!=null) {
+            logd(logId, "Mouse 1 down TowerBlueprint="+towerBlueprint.logf()+" => Cleaning tower");
+            Destroy(towerBlueprint.gameObject);
+            towerBlueprint=null;
         }
     }
     public void InstantiateTowerBlueprint() {
         string logId = "InstantiateTowerBlueprint";
         if(towerBlueprint!=null) {
-            logw(logId, "Already placing a TowerBlueprint="+towerBlueprint.logf()+"=> no-op");
+            logw(logId, "Already placing a TowerBlueprint="+towerBlueprint.logf()+" => no-op");
             return;
         }
-        logd(logId, "TowerBlueprint="+towerBlueprint.logf()+"=>Instatiate TowerBlueprint");
+        logd(logId, "TowerBlueprint="+towerBlueprint.logf()+" => Instatiate TowerBlueprint");
         towerBlueprint = Instantiate(towerGO).GetComponent<Tower>();
         SetIndicators();
         StartCoroutine(CheckTowersNearbyRoutine());
